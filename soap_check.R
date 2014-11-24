@@ -1,13 +1,6 @@
 # Check whether a soap film smoother boundary and knots make sense
-#
-# Setting up a soap film smoother is often a hard and frustrating process. This function checks that the data that you feed to soap are "correct". Feed it our boundary and optionally knots and data and the function will show you what soap will model.
-#
-# To do all the spatial stuff, we require a couple of extra libraries.
-#
-# Other tips
-#  * The script assumes that your spatial variable names are "x" and "y".
-#  * Make sure that your locations are in Northings/Eastings. Using latitude and longitude will give strange results.
-#  * Sometimes you need to increase the tolerance (tol)
+
+# see Readme.md for details on how to use this
 
 library(mgcv)
 library(rgeos)
