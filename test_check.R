@@ -19,26 +19,32 @@ test_that("silly checks",{
 context("Ramsay horseshoe")
 
 fsb <- list(fs.boundary())
-#nmax <- 100
-### create some internal knots...
-#knots <- data.frame(v=rep(seq(-.5,3,by=.5),4),
-#                    w=rep(c(-.6,-.3,.3,.6),rep(8,4)))
-### Simulate some fitting data, inside boundary...
-#set.seed(0)
-#n<-600
-#v <- runif(n)*5-1;w<-runif(n)*2-1
-#y <- fs.test(v,w,b=1)
-#names(fsb[[1]]) <- c("v","w")
-#ind <- inSide(fsb,x=v,y=w) ## remove outsiders
-#y <- y + rnorm(n)*.3 ## add noise
-#y <- y[ind];v <- v[ind]; w <- w[ind]
-#n <- length(y)
+nmax <- 100
+## create some internal knots...
+knots <- data.frame(x=rep(seq(-.5,3,by=.5),4),
+                    y=rep(c(-.6,-.3,.3,.6),rep(8,4)))
+## Simulate some fitting data, inside boundary...
+set.seed(0)
+n<-600
+dat <- data.frame(x = runif(n)*5-1,
+                  y = runif(n)*2-1)
+x <- dat$x; y <- dat$y
+ind <- inSide(fsb,x,y) ## remove outsiders
+dat <- dat[ind,]
 
-test_that("check it works",{
+test_that("boundary works",{
   expect_true(soap_check(fsb, plot=FALSE))
 })
 
-test_that("check it doesn't work...",{
+test_that("knots work",{
+  expect_true(soap_check(fsb, knots, plot=FALSE))
+})
+
+test_that("data works",{
+  expect_true(soap_check(fsb, data=dat, plot=FALSE))
+})
+
+test_that("bad boundary doesn't work...",{
   bnd2 <- fsb
   # start != end
   bnd2[[1]]$x <- bnd2[[1]]$x[-length(bnd2[[1]]$x)]
@@ -51,19 +57,53 @@ test_that("check it doesn't work...",{
 
 })
 
+test_that("bad knots fail",{
+  knots <- rbind(knots,c(-1,-1))
+  expect_error(soap_check(fsb, knots, plot=FALSE))
+})
 
-context("Ramsay horseshoe -- inside out")
+context("Ramsay horseshoe (inside out)")
 
 fsb <- fs.boundary()
 fsb <- list(fsb,
-            list(x=range(fsb$x)[c(1,1,2,2,1)],
-                 y=range(fsb$y)[c(1,2,2,1,1)]))
+            list(x=range(fsb$x)[c(1,1,2,2,1)],#+c(-1,-1,1,1,-1),
+                 y=range(fsb$y)[c(1,2,2,1,1)]))#+c(-1,1,1,-1,-1)))
 
-test_that("check it works",{
+test_that("check the boundary works",{
   expect_true(soap_check(fsb, plot=FALSE))
 })
 
+test_that("check when the boundary doesn't work...",{
+  bnd2 <- fsb
+  # start != end
+  bnd2[[1]]$x <- bnd2[[1]]$x[-length(bnd2[[1]]$x)]
+  bnd2[[1]]$y <- bnd2[[1]]$y[-length(bnd2[[1]]$y)]
+  expect_error(soap_check(bnd2))
 
+  # overlapping
+  #bnd2 <- c(fsb, fsb)
+  #expect_error(soap_check(bnd2))
+
+})
+
+# using the knots from the previous example fails
+test_that("bad knots fail",{
+  expect_error(soap_check(fsb, knots, plot=FALSE))
+})
+
+test_that("bad data fails",{
+  expect_error(soap_check(fsb, data=dat, plot=FALSE))
+})
+
+dat <- data.frame(x = runif(n)*5-1,
+                  y = runif(n)*2-1)
+x <- dat$x; y <- dat$y
+ind <- inSide(fsb,x,y) ## remove outsiders
+dat <- dat[ind,]
+
+test_that("data works",{
+  expect_true(soap_check(fsb, data=dat, plot=FALSE))
+})
 
 #context("Kodiak islands")
 

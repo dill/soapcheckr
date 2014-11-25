@@ -6,7 +6,7 @@ library(mgcv)
 library(rgeos)
 library(sp)
 
-soap_check <- function(bnd, soap_knots=NULL, data=NULL, plot=TRUE,
+soap_check <- function(bnd, knots=NULL, data=NULL, plot=TRUE,
                        tol=sqrt(.Machine$double.eps)){
 
   ## check that the boundary makes sense
@@ -97,15 +97,30 @@ soap_check <- function(bnd, soap_knots=NULL, data=NULL, plot=TRUE,
     }
   }
 
+  # function to check if points are inside the boundary
+  point_check <- function(bnd, x, y, type){
+    inout <- inSide(bnd, x, y)
+    if(!all(inout)){
+      stop(paste(type, paste(which(!inout),collapse=", "),
+                 "are outside the boundary."))
+    }
+  }
 
   ## check the knots
-  if(!is.null(soap_knots)){
+  if(!is.null(knots)){
+    # check that the points have x and y elements
+    stopifnot(c("x","y") %in% names(knots))
+    point_check(bnd, knots$x, knots$y, "Knots")
+    if(plot) points(knots, col="#1b9e77", pch=19)
   }
 
   ## check the data
   if(!is.null(data)){
+    # check that the points have x and y elements
+    stopifnot(c("x","y") %in% names(data))
+    point_check(bnd, data$x, data$y, "Data points")
+    if(plot) points(data, col="#7570b3", pch=19)
   }
-
 
   return(TRUE)
 }
