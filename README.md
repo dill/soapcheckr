@@ -35,6 +35,7 @@ To do all the spatial stuff, we require a couple of extra libraries: `rgeos` and
   * The script assumes that your spatial variable names are `x` and `y`.
   * Make sure that your locations are in Northings/Eastings. Using latitude and longitude will give strange results (as the soap film smoother is isotropic so treats 1 unit change in either dimension is equal, this isn't true for lat/long!).
   * Sometimes you need to increase the tolerance (e.g `tol=1e-6`)
+  * Note that the boundary must be a `list` of `list`s or `data.frame`s. So if you have a polygon boundary with your boundary vertices in it, that must be wrapped in a `list`!
 
 
 Written by David L Miller and released under the GPL (version 2).
