@@ -99,7 +99,19 @@ soap_check <- function(bnd, knots=NULL, data=NULL, plot=TRUE,
 
   # function to check if points are inside the boundary
   point_check <- function(bnd, x, y, type){
-    inout <- inSide(bnd, x, y)
+    # inSide doesn't deal with edge points very well
+    #inout <- inSide(bnd, x, y)
+
+    # use sp::point.in.polygon
+    # see ?point.in.polygon for returned codes, 1 is inside
+    pip <- function(bnd, x, y){
+      point.in.polygon(x, y, bnd$x, bnd$y)==1
+    }
+    # apply over the parts of the polygon
+    inout <- lapply(bnd, pip, x=x, y=y)
+    # combine the results for the polygons
+    inout <- apply(as.data.frame(inout),1,all)
+
     if(!all(inout)){
       stop(paste(type, paste(which(!inout),collapse=", "),
                  "are outside the boundary."))
