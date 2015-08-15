@@ -57,9 +57,9 @@ test_that("bad boundary doesn't work...",{
 
 })
 
+bad_knots <- rbind(knots,c(-1,-1))
 test_that("bad knots fail",{
-  knots <- rbind(knots,c(-1,-1))
-  expect_error(soap_check(fsb, knots, plot=FALSE))
+  expect_error(soap_check(fsb, bad_knots, plot=FALSE))
 })
 
 context("Ramsay horseshoe (inside out)")
@@ -88,7 +88,7 @@ test_that("check when the boundary doesn't work...",{
 
 # using the knots from the previous example fails
 test_that("bad knots fail",{
-  expect_error(soap_check(fsb, knots, plot=FALSE))
+  expect_error(soap_check(fsb, bad_knots, plot=FALSE))
 })
 
 test_that("bad data fails",{
