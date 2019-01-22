@@ -12,12 +12,11 @@ autocruncher <- function(bnd,knots,nmax=200,k=10, xname="x", yname="y") {
   autocrunch.knots <- function(G,knots,x0,y0,dx,dy)
   ## finds indices of knot locations in solution grid
   ## the knot x,y locations are given in the `knots' argument.
-  { 
-  badk <- c()
+  {
+  badk <- NULL
   nk <- length(knots$x)
     nx <- ncol(G);ny <- nrow(G)
-    ki <- rep(0,nk)
-    if (nk==0) return(ki)
+    if (nk==0) return(NULL)
     for (k in 1:nk) {
       i <- round((knots$x[k]-x0)/dx)+1
       j <- round((knots$y[k]-y0)/dy)+1
@@ -37,10 +36,12 @@ autocruncher <- function(bnd,knots,nmax=200,k=10, xname="x", yname="y") {
 
   # boundary names must be x and y!
   bnd <- lapply(bnd, function(x, xname, yname){
-    x$x <- x[[xname]]
-    x[[xname]] <- NULL
-    x$y <- x[[yname]]
-    x[[yname]] <- NULL
+    if(!all(names(x) == c("x", "y"))){
+      x$x <- x[[xname]]
+      x[[xname]] <- NULL
+      x$y <- x[[yname]]
+      x[[yname]] <- NULL
+    }
     x
   }, xname=xname, yname=yname)
   knots$x <- knots[[xname]]

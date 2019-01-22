@@ -5,6 +5,7 @@
 library(mgcv)
 library(rgeos)
 library(sp)
+source("autocrunch.R")
 
 soap_check <- function(bnd, knots=NULL, data=NULL, plot=TRUE,
                        tol=sqrt(.Machine$double.eps)){
@@ -124,7 +125,15 @@ soap_check <- function(bnd, knots=NULL, data=NULL, plot=TRUE,
     # check that the points have x and y elements
     stopifnot(c("x","y") %in% names(knots))
     point_check(bnd, knots$x, knots$y, "Knots")
-    if(plot) points(knots, col="#1b9e77", pch=19)
+    crunch_ind <- autocruncher(bnd, knots)
+    if(!is.null(crunch_ind)){
+      stop(paste0("Knots ", paste(crunch_ind, collapse=", "),
+                 "are outside the boundary."))
+    }
+    if(plot){
+      points(knots, col="#1b9e77", pch=19)
+      if(!is.null(crunch_ind)) points(knots[crunch_ind, ], col="#1b9e77", pch=4)
+    }
   }
 
   ## check the data
