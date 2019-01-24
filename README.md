@@ -97,7 +97,11 @@ points(knots[crunch_ind, ], pch=4)
 ![](.images/plot-crunch-1.png)<!-- -->
 
 We can now simply remove them and fit our model successfully (via
-`knots[-crunch_ind]`).
+`knots[-crunch_ind, ]`).
+
+Note that you need to set the `k` argument to `autocruncher` to be the
+same as your planned value in `gam` and if you set the `nmax` parameter
+for the soap film you need to provide that to `autocruncher` too.
 
 ## Other tips
 

@@ -9,12 +9,12 @@ autocruncher <- function(bnd,knots,nmax=200,k=10, xname="x", yname="y") {
 ## setup soap film  smooth - nmax is number of grid cells for longest side
 ## it's important that grid cells are square!
 
-  autocrunch.knots <- function(G,knots,x0,y0,dx,dy)
+  autocrunch.knots <- function(G,knots,x0,y0,dx,dy){
   ## finds indices of knot locations in solution grid
   ## the knot x,y locations are given in the `knots' argument.
-  {
-  badk <- NULL
-  nk <- length(knots$x)
+    badk <- NULL
+    nk <- length(knots$x)
+    ki <- rep(0,nk)
     nx <- ncol(G);ny <- nrow(G)
     if (nk==0) return(NULL)
     for (k in 1:nk) {
@@ -30,7 +30,7 @@ autocruncher <- function(bnd,knots,nmax=200,k=10, xname="x", yname="y") {
       }
     } ## all knots done
     #ki ## ki[k] indexes kth knot in solution grid
-  badk
+    badk
   } ## end crunch.knots
 
 
