@@ -21,11 +21,7 @@ fsb <- list(fs.boundary())
 soap_check(fsb)
 ```
 
-![](.images/ramsay-1.png)<!-- -->
-
-    ## [1] TRUE
-
-### “inside-out” "Ramsay horseshoe
+### “inside-out” “Ramsay horseshoe
 
 ``` r
 fsb_io <- fs.boundary()
@@ -34,10 +30,6 @@ fsb_io <- list(fsb_io,
                     y=range(fsb_io$y)[c(1,2,2,1,1)]))
 soap_check(fsb_io)
 ```
-
-![](.images/ramsay-inverse-1.png)<!-- -->
-
-    ## [1] TRUE
 
 ### Knots
 
@@ -84,8 +76,6 @@ crunch_ind <- autocruncher(fsb, knots, k=30, xname="v", yname="w")
 crunch_ind
 ```
 
-    ## [1]  1 13 66 93
-
 We can see these knots are on the boundary are an issue (crosses):
 
 ``` r
@@ -93,8 +83,6 @@ plot(fsb[[1]]$v, fsb[[1]]$w, type="l", asp=1, xlab="v", ylab="w")
 points(knots)
 points(knots[crunch_ind, ], pch=4)
 ```
-
-![](.images/plot-crunch-1.png)<!-- -->
 
 We can now simply remove them and fit our model successfully (via
 `knots[-crunch_ind, ]`).
@@ -105,14 +93,14 @@ for the soap film you need to provide that to `autocruncher` too.
 
 ## Other tips
 
-  - The script assumes that your spatial variable names are `x` and `y`.
-  - Make sure that your locations are in Northings/Eastings. Using
-    latitude and longitude will give strange results (as the soap film
-    smoother is isotropic so treats 1 unit change in either dimension is
-    equal, this isn’t true for lat/long\!).
-  - Sometimes you need to increase the tolerance (e.g `tol=1e-6`)
-  - Note that the boundary must be a `list` of `list`s or `data.frame`s.
-    So if you have a polygon boundary with your boundary vertices in it,
-    that must be wrapped in a `list`\!
+- The script assumes that your spatial variable names are `x` and `y`.
+- Make sure that your locations are in Northings/Eastings. Using
+  latitude and longitude will give strange results (as the soap film
+  smoother is isotropic so treats 1 unit change in either dimension is
+  equal, this isn’t true for lat/long!).
+- Sometimes you need to increase the tolerance (e.g `tol=1e-6`)
+- Note that the boundary must be a `list` of `list`s or `data.frame`s.
+  So if you have a polygon boundary with your boundary vertices in it,
+  that must be wrapped in a `list`!
 
 Written by David L Miller and released under the GPL (version 2).
