@@ -8,6 +8,7 @@
 # library(rgeos)
 # library(sp)
 
+#' @import graphics
 #' @import mgcv
 #' @import rgeos
 #' @import sf
@@ -95,16 +96,16 @@ soap_check <- function(bnd, knots = NULL, data = NULL, plot = TRUE,
     # if the boundary is only 1 part, plotting is rather easier
     if(!islands){
       plot(bnd[[1]], type="l", main="Red indicates soap film surface", asp=1)
-      lapply(bnd, polygon::polygon, col=red)
+      lapply(bnd, graphics::polygon, col=red)
     }else{
       outer_bnd <- bnd[[outer_ind]]
       other_bnd <- bnd
       other_bnd[[outer_ind]] <- NULL
       plot(outer_bnd, type="n", main="Red indicates soap film surface", asp=1)
       # plot the outer loop
-      polygon(outer_bnd, col=red)
+      graphics::polygon(outer_bnd, col=red)
       # plot the other polygons on top in white
-      lapply(other_bnd, polygon, col="white")
+      lapply(other_bnd, graphics::polygon, col="white")
     }
   }
 

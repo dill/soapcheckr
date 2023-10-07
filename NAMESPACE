@@ -2,6 +2,7 @@
 
 export(autocruncher)
 export(soap_check)
+import(graphics)
 import(mgcv)
 import(rgeos)
 import(sf)
