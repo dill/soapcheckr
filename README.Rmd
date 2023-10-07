@@ -31,7 +31,7 @@ To do all the spatial stuff, we require a couple of extra libraries: `rgeos` and
 fsb <- list(fs.boundary())
 soap_check(fsb)
 ```
-![]("/man/figures/ramsay-1.png")
+![]("./man/figures/ramsay-1.png")
 
 ### "inside-out" "Ramsay horseshoe
 

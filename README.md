@@ -20,7 +20,7 @@ fsb <- list(fs.boundary())
 soap_check(fsb)
 ```
 
-![](%22/man/figures/ramsay-1.png%22)
+![](./man/figures/ramsay-1.png)
 
 ### “inside-out” “Ramsay horseshoe
 
