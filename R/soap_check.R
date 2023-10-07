@@ -95,7 +95,7 @@ soap_check <- function(bnd, knots = NULL, data = NULL, plot = TRUE,
     # if the boundary is only 1 part, plotting is rather easier
     if(!islands){
       plot(bnd[[1]], type="l", main="Red indicates soap film surface", asp=1)
-      lapply(bnd, polygon, col=red)
+      lapply(bnd, polygon::polygon, col=red)
     }else{
       outer_bnd <- bnd[[outer_ind]]
       other_bnd <- bnd
