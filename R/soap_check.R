@@ -114,7 +114,7 @@ soap_check <- function(bnd, knots = NULL, data = NULL, plot = TRUE,
     if(length(bnd)>1){
       # inSide doesn't deal with edge points very well
       # but does handle multiple rings better
-      inout <- inSide(bnd, x, y)
+      inout <- mgcv::inSide(bnd, x, y)
     }else{
       # use sp::point.in.polygon
       # see ?point.in.polygon for returned codes, 1 is inside
