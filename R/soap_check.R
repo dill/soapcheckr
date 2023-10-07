@@ -7,10 +7,12 @@
 # library(mgcv)
 # library(rgeos)
 # library(sp)
+
 #' @import mgcv
 #' @import rgeos
 #' @import sf
 #' @import sp
+#' @import utils
 #' @export
 #
 # source("autocrunch.R")
