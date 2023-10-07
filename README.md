@@ -16,10 +16,11 @@ To do all the spatial stuff, we require a couple of extra libraries:
 ### Simple example with the “Ramsay horseshoe”
 
 ``` r
-source("soap_check.R")
 fsb <- list(fs.boundary())
 soap_check(fsb)
 ```
+
+![](%22/man/figures/ramsay-1.png%22)
 
 ### “inside-out” “Ramsay horseshoe
 

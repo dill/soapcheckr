@@ -28,10 +28,10 @@ To do all the spatial stuff, we require a couple of extra libraries: `rgeos` and
 ### Simple example with the "Ramsay horseshoe"
 
 ```{r ramsay, message=FALSE, warning=FALSE, eval=FALSE}
-source("soap_check.R")
 fsb <- list(fs.boundary())
 soap_check(fsb)
 ```
+![]("/man/figures/ramsay-1.png")
 
 ### "inside-out" "Ramsay horseshoe
 
