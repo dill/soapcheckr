@@ -44,7 +44,7 @@ soap_check <- function(bnd, knots = NULL, data = NULL, plot = TRUE,
   islands <- FALSE
   # check for intersections
   if(length(bnd)>1){
-    inds <- combn(1:length(bnd),2)
+    inds <- utils::combn(1:length(bnd),2)
 
     ## make the bnds into polys here
     make_bnd_poly <- function(bnd){
