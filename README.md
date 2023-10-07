@@ -32,6 +32,8 @@ fsb_io <- list(fsb_io,
 soap_check(fsb_io)
 ```
 
+![](./man/figures/ramsay-inverse-1.png)
+
 ### Knots
 
 Sometimes knots are too close to the boundary, this end up with errors
@@ -72,7 +74,6 @@ One can go through, one-by-one and remove the offending knots as
 `autocruncher`, which returns all of the offending knots at once:
 
 ``` r
-source("autocrunch.R")
 crunch_ind <- autocruncher(fsb, knots, k=30, xname="v", yname="w")
 crunch_ind
 ```
@@ -84,6 +85,8 @@ plot(fsb[[1]]$v, fsb[[1]]$w, type="l", asp=1, xlab="v", ylab="w")
 points(knots)
 points(knots[crunch_ind, ], pch=4)
 ```
+
+![](./man/figures/plot-crunch-1.png)
 
 We can now simply remove them and fit our model successfully (via
 `knots[-crunch_ind, ]`).
