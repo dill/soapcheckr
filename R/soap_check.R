@@ -15,8 +15,8 @@
 #
 # source("autocrunch.R")
 
-soap_check <- function(bnd, knots=NULL, data=NULL, plot=TRUE,
-                       tol=sqrt(.Machine$double.eps)){
+soap_check <- function(bnd, knots = NULL, data = NULL, plot = TRUE,
+                       tol = sqrt(.Machine$double.eps)){
 
   ## check that the boundary makes sense
   # check that boundary is a list
