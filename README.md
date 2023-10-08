@@ -9,7 +9,15 @@ The function also plots the area that will be modelled by the soap film
 smoother in red.
 
 To do all the spatial stuff, we require a couple of extra libraries:
-`rgeos` and `sp` (as well as `mgcv`).
+`rgeos` and `sp` (as well as `mgcv`). That will be loaded when
+installing `soapcheckr`.
+
+`{soapcheckr}` can be installed using the following code;
+
+``` r
+install.packages("devtools")
+devtools::install_github("benjaminhlina/soap_checker")
+```
 
 ## Ensuring the boundary is right
 
