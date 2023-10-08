@@ -10,7 +10,8 @@
 #' @import utils
 #' @export
 # NB in mgcv nmax is 100 here, where as the default is 200
-autocruncher <- function(bnd,knots,nmax=200,k=10, xname="x", yname="y") {
+autocruncher <- function(bnd, knots, nmax = 200,
+                         k = 10, xname = "x", yname = "y") {
   ## setup soap film  smooth - nmax is number of grid cells for longest side
   ## it's important that grid cells are square!
 
