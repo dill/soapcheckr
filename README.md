@@ -24,6 +24,9 @@ devtools::install_github("benjaminhlina/soap_checker")
 ### Simple example with the “Ramsay horseshoe”
 
 ``` r
+library(mgcv)
+library(soapcheckr)
+
 fsb <- list(fs.boundary())
 soap_check(fsb)
 ```
