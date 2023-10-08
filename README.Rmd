@@ -31,7 +31,7 @@ To do all the spatial stuff, we require a couple of extra libraries: `rgeos` and
 fsb <- list(fs.boundary())
 soap_check(fsb)
 ```
-![]("./man/figures/ramsay-1.png")
+![](./man/figures/ramsay-1.png)
 
 ### "inside-out" "Ramsay horseshoe
 
@@ -42,7 +42,7 @@ fsb_io <- list(fsb_io,
                     y=range(fsb_io$y)[c(1,2,2,1,1)]))
 soap_check(fsb_io)
 ```
-![]("./man/figures/ramsay-inverse-1.png")
+![](./man/figures/ramsay-inverse-1.png)
 
 ### Knots
 
@@ -94,7 +94,7 @@ points(knots)
 points(knots[crunch_ind, ], pch=4)
 ```
 
-![]("./man/figures/plot-crunch-1.png")
+![](./man/figures/plot-crunch-1.png)
 
 We can now simply remove them and fit our model successfully (via `knots[-crunch_ind, ]`).
 
