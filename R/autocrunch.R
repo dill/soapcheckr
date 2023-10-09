@@ -5,9 +5,6 @@
 ## bugs added by David L Miller, 2019
 
 #' @import mgcv
-#' @import sf
-#' @import sp
-#' @import utils
 #' @export
 
 
