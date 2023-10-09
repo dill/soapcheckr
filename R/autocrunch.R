@@ -9,6 +9,8 @@
 #' @import sp
 #' @import utils
 #' @export
+
+
 # NB in mgcv nmax is 100 here, where as the default is 200
 autocruncher <- function(bnd, knots, nmax = 200,
                          k = 10, xname = "x", yname = "y") {
