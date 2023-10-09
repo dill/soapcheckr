@@ -1,4 +1,5 @@
 ---
+title: "Soapcheckr"
 output:
   md_document:
     variant: gfm
@@ -13,8 +14,9 @@ knitr::opts_chunk$set(
 )
 ```
 
+# soapcheckr
 
-# Check whether a soap film smoother boundary and knots make sense
+## Check whether a soap film smoother boundary and knots make sense
 
 Setting up a soap film smoother is often a hard and frustrating process. This function checks that the data that you feed to soap are "correct". Feed it our boundary and optionally knots and data and the function will show you what soap will model.
 

@@ -1,4 +1,6 @@
-# Check whether a soap film smoother boundary and knots make sense
+# soapcheckr
+
+## Check whether a soap film smoother boundary and knots make sense
 
 Setting up a soap film smoother is often a hard and frustrating process.
 This function checks that the data that you feed to soap are “correct”.
