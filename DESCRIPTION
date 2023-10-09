@@ -1,9 +1,9 @@
 Package: soapcheckr
 Type: Package
-Title: Check knot locations for soap film smoothers for GAMS
+Title: Check knot locations used by soap film smoothers for GAMS
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
+Author: David L. Miller
+Maintainer: Add in maintainers email <example@gmail.com>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 Imports:
