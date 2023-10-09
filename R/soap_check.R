@@ -4,9 +4,6 @@
 
 # see Readme.md for details on how to use this
 
-# library(mgcv)
-# library(rgeos)
-# library(sp)
 
 #' @import graphics
 #' @import mgcv
@@ -15,8 +12,6 @@
 #' @import sp
 #' @import utils
 #' @export
-#
-# source("autocrunch.R")
 
 soap_check <- function(bnd, knots = NULL, data = NULL, plot = TRUE,
                        tol = sqrt(.Machine$double.eps)){
