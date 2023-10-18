@@ -13,7 +13,12 @@
 #' @import utils
 #' @export
 
-soap_check <- function(bnd, knots = NULL, data = NULL, plot = TRUE,
+
+# need to added crs to this
+soap_check <- function(bnd, knots = NULL,
+                       data = NULL,
+                       crs = NULL,
+                       plot = TRUE,
                        tol = sqrt(.Machine$double.eps)){
 
   ## check that the boundary makes sense
@@ -23,31 +28,37 @@ soap_check <- function(bnd, knots = NULL, data = NULL, plot = TRUE,
   # check that the boundary (or boundary part) have x and y elements
   lapply(bnd, function(x) stopifnot(c("x","y") %in% names(x)))
   # each boundary part must have at least 4 elements!
-  lapply(bnd, function(x) stopifnot(length(x$x)>3, length(x$y)>3))
+  lapply(bnd, function(x) stopifnot(length(x$x) > 3, length(x$y) > 3))
 
   # check that the boundary loops are actually loops
   check_ends <- function(x, tol){
     all.equal(c(x$x[1], x$y[1]),
-              c(x$x[length(x$y)], x$y[length(x$y)]),tolerance=tol)
+              c(x$x[length(x$y)],
+                x$y[length(x$y)]),
+              tolerance = tol)
   }
-  end_check <- unlist(lapply(bnd, check_ends, tol=tol))
+  end_check <- unlist(lapply(bnd, check_ends, tol = tol))
   end_check_logical <- is.character(end_check)
   if(any(end_check_logical)){
-    stop(paste("Boundary loop(s)",which(end_check_logical),
-               "don't have identical start & end points",collapse=" "))
+    stop(paste("Boundary loop(s)", which(end_check_logical),
+               "don't have identical start & end points", collapse = " "))
   }
 
   islands <- FALSE
   # check for intersections
-  if(length(bnd)>1){
-    inds <- utils::combn(1:length(bnd),2)
+  if(length(bnd) > 1){
+    inds <- utils::combn(1:length(bnd), 2)
 
     ## make the bnds into polys here
     make_bnd_poly <- function(bnd){
 
       bnd$x[length(bnd$x)] <-  bnd$x[1]
       bnd$y[length(bnd$y)] <-  bnd$y[1]
-      sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(bnd)),ID=1)))
+      # need to make into sf objects and then see if they
+      # instersect using st_intersects
+
+
+      sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(bnd)), ID = 1)))
     }
     bnd_poly <- lapply(bnd, make_bnd_poly)
 
@@ -107,7 +118,7 @@ soap_check <- function(bnd, knots = NULL, data = NULL, plot = TRUE,
   # function to check if points are inside the boundary
   point_check <- function(bnd, x, y, type){
 
-    if(length(bnd)>1){
+    if(length(bnd) > 1){
       # inSide doesn't deal with edge points very well
       # but does handle multiple rings better
       inout <- mgcv::inSide(bnd, x, y)
