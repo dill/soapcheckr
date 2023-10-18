@@ -73,7 +73,7 @@ soap_check <- function(bnd, knots = NULL, data = NULL, plot = TRUE,
       islands <- unlist(lapply(other_bnd, rgeos::gWithin, spgeom2=outer_bnd))
 
       if(!all(islands)){
-        stop(paste("Polygon parts",
+        warning(paste("Polygon parts",
                    paste0(apply(inds[,inter, drop=FALSE], 2, paste0,
                                 collapse=" and "),
                           collapse=", "), "intersect"))
