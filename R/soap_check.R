@@ -121,7 +121,7 @@ soap_check <- function(bnd, knots = NULL, data = NULL, plot = TRUE,
       inout <- pip(bnd[[1]], x, y)
     }
     if(!all(inout)){
-      stop(paste(type, paste(which(!inout),collapse=", "),
+      warning(paste(type, paste(which(!inout),collapse=", "),
                  "are outside the boundary."))
     }
   }
