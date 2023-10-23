@@ -155,18 +155,28 @@ if(plot){
                                                                 col = cols[[x]]))
     }
   }
-}
 
-  # function to check if points are inside the boundary
-  point_check <- function(bnd, x, y, type){
+  # knots location check
+  #  bnd supplied has to be list, data has to be dataframe object
 
-    if(length(bnd)>1){
+  point_check <- function(bnd, data, type){
+    if(length(bnd) > 1){
       # inSide doesn't deal with edge points very well
       # but does handle multiple rings better
-      inout <- mgcv::inSide(bnd, x, y)
-    }else{
+      if(!all(names(data) %in% c("x", "y"))) {
+        data$x <- data[[x_name]]
+        data[[x_name]] <- NULL
+        data$y <- data[[y_name]]
+        data[[y_name]] <- NULL
+      }
+      x <- data$x
+      y <- data$y
+      inout <- mgcv::inSide(bnd, x = x, y = y)
+    } else{
       # use sp::point.in.polygon
+      # need to use sf points here
       # see ?point.in.polygon for returned codes, 1 is inside
+
       pip <- function(bnd, x, y){
         sp::point.in.polygon(x, y, bnd$x, bnd$y)==1
       }
@@ -175,7 +185,7 @@ if(plot){
     }
     if(!all(inout)){
       warning(paste(type, paste(which(!inout),collapse=", "),
-                 "are outside the boundary."))
+                    "are outside the boundary."))
     }
   }
 
@@ -187,7 +197,7 @@ if(plot){
     crunch_ind <- autocruncher(bnd, knots)
     if(!is.null(crunch_ind)){
       stop(paste0("Knots ", paste(crunch_ind, collapse=", "),
-                 "are outside the boundary."))
+                  "are outside the boundary."))
     }
     if(plot){
       points(knots, col="#1b9e77", pch=19)
