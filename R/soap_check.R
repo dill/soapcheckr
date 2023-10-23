@@ -102,57 +102,58 @@ soap_check <- function(bnd, knots = NULL,
 
   ## plot what the boundary is
   # highlighting the area to be modelled
-}
-# if(all(islands)){
-# highlighting the area to be modeled
-if(plot){
-  # colourblind-safe colours from colorbrewer2 "qualitative" map
-  red <- "#d95f02"
-  # if the boundary is only 1 part, plotting is rather easier
-  if(!islands){
-    plot(bnd[[1]], type = "l", main = "Red indicates soap film surface",
-         asp = 1,
-         ylab = "y",
-         xlab = "x")
-    lapply(bnd, graphics::polygon, col = red)
-  } else {
-    outer_bnd <- bnd[[outer_ind]]
-    other_bnd <- bnd
-    other_bnd[[outer_ind]] <- NULL
 
-    if(all(islands)){
-
-      plot(outer_bnd, type = "n",
-           main = "Red indicates soap film surface",
+  # if(all(islands)){
+  # highlighting the area to be modeled
+  if(plot){
+    # colourblind-safe colours from colorbrewer2 "qualitative" map
+    red <- "#d95f02"
+    # if the boundary is only 1 part, plotting is rather easier
+    if(!islands){
+      plot(bnd[[1]], type = "l", main = "Red indicates soap film surface",
+           asp = 1,
            ylab = "y",
-           xlab = "x",
-           asp = 1)
-      # plot the outer loop
-      graphics::polygon(outer_bnd, col = red)
-      # plot the other polygons on top in white
-      lapply(other_bnd, graphics::polygon, col = "white")
+           xlab = "x")
+      lapply(bnd, graphics::polygon, col = red)
     } else {
-      # if the boundary is only 1 part, plotting is rather easier
-      plot(
-        outer_bnd,
-        type = "n",
-        main = "Red indicates main boundary of film surface",
-        ylab = "y",
-        xlab = "x",
-        asp = 1)
+      outer_bnd <- bnd[[outer_ind]]
+      other_bnd <- bnd
+      other_bnd[[outer_ind]] <- NULL
 
-      # plot the outer loop
-      graphics::polygon(outer_bnd, col = red)
-      # sapply(1:length(other_bnd))
-      col_n <- length(other_bnd)
-      # if(is.null(col)) {
-      cols <- terrain.colors(n = col_n)
-      # } else
-      # cols <- rainbow(n = col_n)
-      # other_bnd <-
-      # plot the other polygons on top in white
-      lapply(1:length(other_bnd), function(x) graphics::polygon(other_bnd[[x]],
-                                                                col = cols[[x]]))
+      if(all(islands)){
+
+        plot(outer_bnd, type = "n",
+             main = "Red indicates soap film surface",
+             ylab = "y",
+             xlab = "x",
+             asp = 1)
+        # plot the outer loop
+        graphics::polygon(outer_bnd, col = red)
+        # plot the other polygons on top in white
+        lapply(other_bnd, graphics::polygon, col = "white")
+      } else {
+        # if the boundary is only 1 part, plotting is rather easier
+        plot(
+          outer_bnd,
+          type = "n",
+          main = "Red indicates main boundary of film surface",
+          ylab = "y",
+          xlab = "x",
+          asp = 1)
+
+        # plot the outer loop
+        graphics::polygon(outer_bnd, col = red)
+        # sapply(1:length(other_bnd))
+        col_n <- length(other_bnd)
+        # if(is.null(col)) {
+        cols <- terrain.colors(n = col_n)
+        # } else
+        # cols <- rainbow(n = col_n)
+        # other_bnd <-
+        # plot the other polygons on top in white
+        lapply(1:length(other_bnd), function(x) graphics::polygon(other_bnd[[x]],
+                                                                  col = cols[[x]]))
+      }
     }
   }
 
@@ -223,42 +224,38 @@ if(plot){
       warning(paste0("Knots ", paste(crunch_ind, collapse = ", "),
                      "are outside the boundary."))
     }
+
+    #DMILL colour "#1b9e77"
     if(plot){
-      points(knots, col="#1b9e77", pch=19)
-      if(!is.null(crunch_ind)) points(knots[crunch_ind, ], col="#1b9e77", pch=4)
+      points(knots,
+             col = "black", pch = 21)
+      if(!is.null(crunch_ind)){
+
+        points(knots[crunch_ind, ],
+               col = "black", pch = 4)
+      }
     }
-  }
 
-  #DMILL colour "#1b9e77"
-  if(plot){
-    points(knots,
-           col = "black", pch = 21)
-    if(!is.null(crunch_ind)){
+    #     # check the data
+    if(!is.null(data)){
+      stopifnot(c("x", "y") %in% names(data))
 
-      points(knots[crunch_ind, ],
-             col = "black", pch = 4)
+      # check that the points have x and y elements
+      point_check(bnd, data, "Data points")
+      if(plot)
+        #DMILL colour #7570b3
+        points(data, col = "black",
+               pch = 19)
     }
-  }
 
-  #     # check the data
-  if(!is.null(data)){
-    stopifnot(c("x", "y") %in% names(data))
-
-    # check that the points have x and y elements
-    point_check(bnd, data, "Data points")
-    if(plot)
-      #DMILL colour #7570b3
-      points(data, col = "black",
-             pch = 19)
-  }
-
-  if(length(bnd) > 1 & all(islands)){
-    return(TRUE)
-  }
-  if(length(bnd) > 1 & !all(islands)){
-    return(FALSE)
-  }
-  if(length(bnd) %in% 1){
-    return(TRUE)
+    if(length(bnd) > 1 & all(islands)){
+      return(TRUE)
+    }
+    if(length(bnd) > 1 & !all(islands)){
+      return(FALSE)
+    }
+    if(length(bnd) %in% 1){
+      return(TRUE)
+    }
   }
 }
