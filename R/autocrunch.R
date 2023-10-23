@@ -131,11 +131,20 @@ autocruncher <- function(bnd,
   G <- matrix(0, ny, nx)
   nb <- rep(0,bnc$n.loop)
 # bring in C_boundary using mgcv:::C_boundary
-  oo <- .C(mgcv:::C_boundary,G=as.integer(G), d=as.double(G), dto=as.double(G),
-           x0=as.double(x0),
-           y0 = as.double(y0), dx=as.double(dx), dy = as.double(dy),
-           nx=as.integer(nx),as.integer(ny), x=as.double(bnc$x),y=as.double(bnc$y),
-           breakCode=as.double(bnc$breakCode),n=as.integer(bnc$n),nb=as.integer(nb))
+  oo <- .C(mgcv:::C_boundary,
+           G = as.integer(G),
+           d = as.double(G),
+           dto = as.double(G),
+           x0 = as.double(x0),
+           y0 = as.double(y0),
+           dx = as.double(dx),
+           dy = as.double(dy),
+           nx = as.integer(nx),
+           as.integer(ny),
+           x = as.double(bnc$x),
+           y = as.double(bnc$y),
+           breakCode = as.double(bnc$breakCode),
+           n = as.integer(bnc$n), nb = as.integer(nb))
 
   ret <- list(G=matrix(oo$G,ny,nx),nb=oo$nb,d=oo$d[oo$d >= 0],
               x0=x0,y0=y0,dx=dx,dy=dy,bnd=bnd)
