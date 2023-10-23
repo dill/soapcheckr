@@ -14,19 +14,20 @@ autocruncher <- function(bnd, knots, nmax = 200,
   ## setup soap film  smooth - nmax is number of grid cells for longest side
   ## it's important that grid cells are square!
 
-  autocrunch.knots <- function(G,knots,x0,y0,dx,dy){
+  autocrunch.knots <- function(G, knots, x0, y0, dx, dy){
     ## finds indices of knot locations in solution grid
     ## the knot x,y locations are given in the `knots' argument.
     badk <- NULL
     nk <- length(knots$x)
-    ki <- rep(0,nk)
-    nx <- ncol(G);ny <- nrow(G)
-    if (nk==0) return(NULL)
+    ki <- rep(0, nk)
+    nx <- ncol(G);
+    ny <- nrow(G)
+    if (nk == 0) return(NULL)
     for (k in 1:nk) {
-      i <- round((knots$x[k]-x0)/dx)+1
-      j <- round((knots$y[k]-y0)/dy)+1
-      if (i>1&&i<=nx&&j>1&&j<=ny) {
-        ki[k] <- G[j,i]
+      i <- round((knots$x[k] - x0) / dx) + 1
+      j <- round((knots$y[k] - y0) / dy) + 1
+      if (i > 1 && i <= nx && j > 1 && j <= ny) {
+        ki[k] <- G[j, i]
         if (ki[k] <= 0) {
           badk <- c(badk, k)
           #str <- paste("knot",k,"is on or outside boundary")
@@ -87,7 +88,7 @@ autocruncher <- function(bnd, knots, nmax = 200,
   ## Create grid index G
   bnc <- mgcv:::bnd2C(bnd) ## convert boundary to form required in C code
 
-  G <- matrix(0,ny,nx)
+  G <- matrix(0, ny, nx)
   nb <- rep(0,bnc$n.loop)
 
   oo <- .C(mgcv:::C_boundary,G=as.integer(G), d=as.double(G), dto=as.double(G),
@@ -114,7 +115,7 @@ autocruncher <- function(bnd, knots, nmax = 200,
   ## X = PLUQ where P and Q are permuation matrices.
 
   ## now obtain location of knots in solution ...
-  ret <- autocrunch.knots(ret$G,knots,x0,y0,dx,dy)
+  ret <- autocrunch.knots(ret$G, knots, x0, y0, dx, dy)
 
   ret
 } ## end of setup.soap
