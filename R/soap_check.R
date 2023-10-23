@@ -15,8 +15,12 @@
 #' @param data A dataframe with two columns that are the coordinates of the data
 #' that are to be supplied to the soap-film smoother. Coordinates need to be in
 #' meaningful units. For example, coordinates could be in UTMs as UTMs rely on metres.
+#' @param plot logical if plot of boundary, knots, and/or data should be plotted.
+#' Default is `TRUE`
 #' @param tol Tolerance value to check if boundaries are complete polygons.
 #' Sometimes tolerance needs to be increased (e.g., tol = 1e-6)
+#' @param x_name Column name of x coordinate for the knots and/or data object
+#' @param y_name Column name of y coordinate for the knots and/or data object
 #'
 #' @return TRUE or FALSE depending on whether the boundary will be able to used
 #' by a soap-film smoother. Addtionally if supplying knots and/or data. It will warn
@@ -31,6 +35,7 @@
 #'
 #' @import dplyr
 #' @import graphics
+#' @import grDevices
 #' @import mgcv
 #' @import sf
 #' @import utils
