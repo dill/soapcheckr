@@ -229,13 +229,28 @@ if(plot){
       }
     }
 
-    ## check the data
-    if(!is.null(data)){
-      # check that the points have x and y elements
-      stopifnot(c("x","y") %in% names(data))
-      point_check(bnd, data$x, data$y, "Data points")
-      if(plot) points(data, col="#7570b3", pch=19)
+  #DMILL colour "#1b9e77"
+    if(plot){
+      points(knots,
+             col = "black", pch = 21)
+      if(!is.null(crunch_ind)){
+
+        points(knots[crunch_ind, ],
+               col = "black", pch = 4)
+      }
     }
+
+  #     # check the data
+  if(!is.null(data)){
+    stopifnot(c("x", "y") %in% names(data))
+
+    # check that the points have x and y elements
+    point_check(bnd, data, "Data points")
+    if(plot)
+      #DMILL colour #7570b3
+      points(data, col = "black",
+             pch = 19)
+  }
 
     return(TRUE)
   }
