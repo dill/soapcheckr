@@ -252,5 +252,13 @@ if(plot){
              pch = 19)
   }
 
+  if(length(bnd) > 1 & all(islands)){
     return(TRUE)
+  }
+  if(length(bnd) > 1 & !all(islands)){
+    return(FALSE)
+  }
+  if(length(bnd) %in% 1){
+    return(TRUE)
+  }
   }
