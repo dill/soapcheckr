@@ -13,8 +13,12 @@
 #' @export
 
 
-soap_check <- function(bnd, knots = NULL, data = NULL, plot = TRUE,
-                       tol = sqrt(.Machine$double.eps)){
+soap_check <- function(bnd, knots = NULL,
+                       data = NULL,
+                       plot = TRUE,
+                       tol = sqrt(.Machine$double.eps),
+                       x_name = "x",
+                       y_name = "y"){
 
   ## check that the boundary makes sense
   # check that boundary is a list
@@ -23,31 +27,42 @@ soap_check <- function(bnd, knots = NULL, data = NULL, plot = TRUE,
   # check that the boundary (or boundary part) have x and y elements
   lapply(bnd, function(x) stopifnot(c("x","y") %in% names(x)))
   # each boundary part must have at least 4 elements!
-  lapply(bnd, function(x) stopifnot(length(x$x)>3, length(x$y)>3))
+  lapply(bnd, function(x) stopifnot(length(x$x) > 3, length(x$y) > 3))
 
   # check that the boundary loops are actually loops
   check_ends <- function(x, tol){
     all.equal(c(x$x[1], x$y[1]),
-              c(x$x[length(x$y)], x$y[length(x$y)]),tolerance=tol)
+              c(x$x[length(x$y)],
+                x$y[length(x$y)]),
+              tolerance = tol)
   }
-  end_check <- unlist(lapply(bnd, check_ends, tol=tol))
+  end_check <- unlist(lapply(bnd, check_ends, tol = tol))
   end_check_logical <- is.character(end_check)
   if(any(end_check_logical)){
-    stop(paste("Boundary loop(s)",which(end_check_logical),
-               "don't have identical start & end points",collapse=" "))
+    stop(paste("Boundary loop(s)", which(end_check_logical),
+               "don't have identical start & end points", collapse = " "))
   }
 
   islands <- FALSE
   # check for intersections
-  if(length(bnd)>1){
-    inds <- utils::combn(1:length(bnd),2)
+  if(length(bnd) > 1){
+    inds <- utils::combn(1:length(bnd), 2)
 
-    ## make the bnds into polys here
-    make_bnd_poly <- function(bnd){
+    # make the bnds into polys here
+    make_bnd_poly <- function(bnd, crs = NULL){
+      # make last point become the first point to complete the polygons
+      bnd$x[length(bnd$x) + 1] <-  bnd$x[1]
+      bnd$y[length(bnd$y) + 1] <-  bnd$y[1]
 
-      bnd$x[length(bnd$x)] <-  bnd$x[1]
-      bnd$y[length(bnd$y)] <-  bnd$y[1]
-      sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(bnd)),ID=1)))
+      # convert each bnd list object into sf object
+      bnd <- as.data.frame(bnd) |>
+        sf::st_as_sf(coords = c("x", "y")) |>
+        dplyr::mutate(
+          id = 1
+        ) |>
+        dplyr::group_by(id) |>
+        dplyr::summarise(do_union = FALSE) |>
+        sf::st_cast("POLYGON")
     }
     bnd_poly <- lapply(bnd, make_bnd_poly)
 
