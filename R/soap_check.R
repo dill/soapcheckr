@@ -102,24 +102,36 @@ soap_check <- function(bnd, knots = NULL,
 
   ## plot what the boundary is
   # highlighting the area to be modelled
-  if(plot){
-    # colourblind-safe colours from colorbrewer2 "qualitative" map
-    red <- "#d95f02"
-    # if the boundary is only 1 part, plotting is rather easier
-    if(!islands){
-      plot(bnd[[1]], type="l", main="Red indicates soap film surface", asp=1)
-      lapply(bnd, graphics::polygon, col=red)
-    }else{
-      outer_bnd <- bnd[[outer_ind]]
-      other_bnd <- bnd
-      other_bnd[[outer_ind]] <- NULL
-      plot(outer_bnd, type="n", main="Red indicates soap film surface", asp=1)
+}
+# if(all(islands)){
+# highlighting the area to be modeled
+if(plot){
+  # colourblind-safe colours from colorbrewer2 "qualitative" map
+  red <- "#d95f02"
+  # if the boundary is only 1 part, plotting is rather easier
+  if(!islands){
+    plot(bnd[[1]], type = "l", main = "Red indicates soap film surface",
+         asp = 1,
+         ylab = "y",
+         xlab = "x")
+    lapply(bnd, graphics::polygon, col = red)
+  } else {
+    outer_bnd <- bnd[[outer_ind]]
+    other_bnd <- bnd
+    other_bnd[[outer_ind]] <- NULL
+
+    if(all(islands)){
+
+      plot(outer_bnd, type = "n",
+           main = "Red indicates soap film surface",
+           ylab = "y",
+           xlab = "x",
+           asp = 1)
       # plot the outer loop
-      graphics::polygon(outer_bnd, col=red)
+      graphics::polygon(outer_bnd, col = red)
       # plot the other polygons on top in white
-      lapply(other_bnd, graphics::polygon, col="white")
+      lapply(other_bnd, graphics::polygon, col = "white")
     }
-  }
 
   # function to check if points are inside the boundary
   point_check <- function(bnd, x, y, type){
