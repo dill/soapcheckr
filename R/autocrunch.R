@@ -1,16 +1,44 @@
-## autocruncher -- find all the bad knots
-## based on soap.r in mgcv
-## Copyright Simon Wood 2006-2012
-
-## bugs added by David L Miller, 2019
-
+#' Quickly find knots that will cause issues for soap-film smoother
+#' Setting up a soap film smoother is often a hard and frustrating process.
+#' This function checks that all knots, not just one knot are within the boundary
+#' and futher enough away from the boundary to effectively use a soap-film smoother
+#'
+#' @param bnd A list with sub-lists that will be the boundary the soap-film smoother
+#' will smooth in. Coordinates need to be in a reference system that has meaningful units.
+#' For example, coordinates could be in UTMs as UTMs rely on metres.
+#' @param knots A dataframe with two columns that are the coordinates of the knots
+#' that are to be supplied to the soap-film smoother.
+#' Coordinates need to be be in meaniful units. For example, coordinates could be
+#' in UTMs as UTMs rely on metres.
+#' @param nmax If supplying `nmax` argument to `mgcv::gam()`, provide that
+#' same value to `autocruncher()`.
+#' @param k If supplying `k` argument to `mgcv::gam()`, provide that
+#' same value to `autocruncher()`.
+#'
+#' @return A vector of the indices of all of the knots that either fall outside
+#' the boundary or too close to the boundary and will cause for the soap-film
+#' smoother to error.
+#'
+#' @references
+#' This function is based on soap.r in {mgcv}, Copyright Simon Wood 2006-2012.
+#' Bugs fixes added by David L Miller, 2019
+#'
+#' @examples
+#' # crunch_ind <- autocruncher(fsb, knots, k=30, xname="v", yname="w"), will add more
+#' crunch_ind <- autocruncher(sissabagama_lake_ls, sissabagama_lake_knots)
+#'
 #' @import mgcv
 #' @export
+#'
 
 
 # NB in mgcv nmax is 100 here, where as the default is 200
-autocruncher <- function(bnd, knots, nmax = 200,
-                         k = 10, xname = "x", yname = "y") {
+autocruncher <- function(bnd,
+                         knots,
+                         k = 10,
+                         nmax = 200,
+                         xname = "x",
+                         yname = "y"){
   ## setup soap film  smooth - nmax is number of grid cells for longest side
   ## it's important that grid cells are square!
 
