@@ -24,6 +24,10 @@ same value to \code{autocruncher()}.}
 
 \item{nmax}{If supplying \code{nmax} argument to \code{mgcv::gam()}, provide that
 same value to \code{autocruncher()}.}
+
+\item{xname}{Column name of x coordinate for the knots object}
+
+\item{yname}{Column name of y coordinate for the knots object}
 }
 \value{
 A vector of the indices of all of the knots that either fall outside

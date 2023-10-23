@@ -27,8 +27,15 @@ meaningful units. For example, coordinates could be in UTMs as UTMs rely on metr
 that are to be supplied to the soap-film smoother. Coordinates need to be in
 meaningful units. For example, coordinates could be in UTMs as UTMs rely on metres.}
 
+\item{plot}{logical if plot of boundary, knots, and/or data should be plotted.
+Default is \code{TRUE}}
+
 \item{tol}{Tolerance value to check if boundaries are complete polygons.
 Sometimes tolerance needs to be increased (e.g., tol = 1e-6)}
+
+\item{x_name}{Column name of x coordinate for the knots and/or data object}
+
+\item{y_name}{Column name of y coordinate for the knots and/or data object}
 }
 \value{
 TRUE or FALSE depending on whether the boundary will be able to used
