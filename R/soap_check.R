@@ -203,7 +203,6 @@ if(plot){
                     "are outside the boundary."))
     }
   }
-
     ## check the knots
     if(!is.null(knots)){
       # check that the points have x and y elements
@@ -215,10 +214,14 @@ if(plot){
       } else {
         point_check(bnd, knots, "Knots")
       }
-      crunch_ind <- autocruncher(bnd, knots)
+
+      crunch_ind <- autocruncher(bnd, knots,
+                                 xname = x_name,
+                                 yname = y_name)
+
       if(!is.null(crunch_ind)){
-        stop(paste0("Knots ", paste(crunch_ind, collapse=", "),
-                    "are outside the boundary."))
+        warning(paste0("Knots ", paste(crunch_ind, collapse = ", "),
+                       "are outside the boundary."))
       }
       if(plot){
         points(knots, col="#1b9e77", pch=19)
