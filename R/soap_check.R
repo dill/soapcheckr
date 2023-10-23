@@ -1,10 +1,23 @@
-
-
-# Check whether a soap film smoother boundary and knots make sense
-
-# see Readme.md for details on how to use this
-
-
+#' Check if boundary, knots, and data can be modelled using a soap-film smoother
+#'
+#'Setting up a soap film smoother is often a hard and frustrating process.
+#'This function checks that the boundary, knots, and data that you feed to
+#'a soap-film smoother are “correct”. The function will plot  the boundary,
+#'knots and data that are trying to be modeled to ensure that they are are
+#'appropriate
+#' @param bnd A list with sub-lists that will be the boundary the soap-film smoother
+#' will smooth in.
+#' @param knots A dataframe with two columns that are the coordinates of the knots
+#' that are to be supplied to the soap-film smoother.
+#' @param data A dataframe with two columns that are the coordinates of the data
+#' that are to be supplied to the soap-film smoother.
+#' @param tol Tolerance value to check if boundaries are complete polygons.
+#' Sometimes tolerance needs to be increased (e.g., tol = 1e-6)
+#'
+#' @return TRUE or FALSE depending on whether the boundary will be able to used
+#' by a soap-film smoother. Addtionally if supplying knots and/or data. It will warn
+#' the user which knots and/or data fall too close or outside the boundary.
+#'
 #' @import dplyr
 #' @import graphics
 #' @import mgcv
@@ -13,8 +26,8 @@
 #' @export
 
 
-
-soap_check <- function(bnd, knots = NULL,
+soap_check <- function(bnd,
+                       knots = NULL,
                        data = NULL,
                        plot = TRUE,
                        tol = sqrt(.Machine$double.eps),
