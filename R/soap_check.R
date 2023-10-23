@@ -173,12 +173,26 @@ if(plot){
       y <- data$y
       inout <- mgcv::inSide(bnd, x = x, y = y)
     } else{
-      # use sp::point.in.polygon
-      # need to use sf points here
-      # see ?point.in.polygon for returned codes, 1 is inside
+      pip <- function(bnd, data){
+        # convert bndry into sf object
 
-      pip <- function(bnd, x, y){
-        sp::point.in.polygon(x, y, bnd$x, bnd$y)==1
+        bnd_comb <- bnd |>
+          as.data.frame() |>
+          st_as_sf(coords = c("x", "y")) |>
+          dplyr::mutate(
+            id = 1
+          ) |>
+          dplyr::group_by(id) |>
+          dplyr::summarise(do_union = FALSE) |>
+          st_cast("POLYGON")
+
+
+        knt_sf <- data |>
+          st_as_sf(coords = c("x", "y"))
+
+        # to replace sp you need to put knots into
+        # sp::point.in.polygon(x, y, bnd$x, bnd$y)==1
+        st_intersects(bnd_comb, knt_sf, sparse = FALSE)[TRUE]
       }
       # apply over the parts of the polygon
       inout <- pip(bnd[[1]], x, y)
