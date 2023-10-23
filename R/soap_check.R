@@ -174,8 +174,8 @@ if(plot){
       inout <- mgcv::inSide(bnd, x = x, y = y)
     } else{
       pip <- function(bnd, data){
-        # convert bndry into sf object
-
+        # convert bndry into sf object, could possibly use bnd_poly here?
+        # would need to look mor into
         bnd_comb <- bnd |>
           as.data.frame() |>
           st_as_sf(coords = c("x", "y")) |>
@@ -195,7 +195,8 @@ if(plot){
         st_intersects(bnd_comb, knt_sf, sparse = FALSE)[TRUE]
       }
       # apply over the parts of the polygon
-      inout <- pip(bnd[[1]], x, y)
+      inout <- pip(bnd = bnd[1], data)
+    }
     }
     if(!all(inout)){
       warning(paste(type, paste(which(!inout),collapse=", "),
