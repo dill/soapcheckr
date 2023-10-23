@@ -75,24 +75,25 @@ soap_check <- function(bnd, knots = NULL,
       sf::st_intersects(poly1, poly2, sparse = FALSE)
     }
     # apply over all the combinations
-    inter <- apply(inds, 2, intersects, bnd=bnd_poly)
+    inter <- apply(inds, 2, intersects, bnd = bnd_poly)
 
     if(any(inter)){
       # get the index for the prospective "outer" loop
-      outer_ind <- which.max(unlist(lapply(bnd_poly, rgeos::gArea)))
+      outer_ind <- which.max(unlist(lapply(bnd_poly, sf::st_area)))
       outer_bnd <- bnd_poly[[outer_ind]]
 
       other_bnd <- bnd_poly
       other_bnd[[outer_ind]] <- NULL
 
       # is everything else inside that?
-      islands <- unlist(lapply(other_bnd, rgeos::gWithin, spgeom2=outer_bnd))
+      islands <- unlist(lapply(other_bnd, sf::st_within, y = outer_bnd,
+                               sparse = FALSE))
 
       if(!all(islands)){
         warning(paste("Polygon parts",
-                   paste0(apply(inds[,inter, drop=FALSE], 2, paste0,
-                                collapse=" and "),
-                          collapse=", "), "intersect"))
+                      paste0(apply(inds[,inter, drop=FALSE], 2, paste0,
+                                   collapse=" and "),
+                             collapse=", "), "intersect"))
       }
 
       islands <- all(islands)
