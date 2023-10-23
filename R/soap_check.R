@@ -197,36 +197,42 @@ if(plot){
       # apply over the parts of the polygon
       inout <- pip(bnd = bnd[1], data)
     }
-    }
+
     if(!all(inout)){
-      warning(paste(type, paste(which(!inout),collapse=", "),
+      warning(paste(type, paste(which(!inout), collapse=", "),
                     "are outside the boundary."))
     }
   }
 
-  ## check the knots
-  if(!is.null(knots)){
-    # check that the points have x and y elements
-    stopifnot(c("x","y") %in% names(knots))
-    point_check(bnd, knots$x, knots$y, "Knots")
-    crunch_ind <- autocruncher(bnd, knots)
-    if(!is.null(crunch_ind)){
-      stop(paste0("Knots ", paste(crunch_ind, collapse=", "),
-                  "are outside the boundary."))
+    ## check the knots
+    if(!is.null(knots)){
+      # check that the points have x and y elements
+      # stopifnot(c("x", "y") %in% names(knots))
+      if(length(bnd) > 1) {
+        suppressWarnings(
+          point_check(bnd, knots, "Knots")
+        )
+      } else {
+        point_check(bnd, knots, "Knots")
+      }
+      crunch_ind <- autocruncher(bnd, knots)
+      if(!is.null(crunch_ind)){
+        stop(paste0("Knots ", paste(crunch_ind, collapse=", "),
+                    "are outside the boundary."))
+      }
+      if(plot){
+        points(knots, col="#1b9e77", pch=19)
+        if(!is.null(crunch_ind)) points(knots[crunch_ind, ], col="#1b9e77", pch=4)
+      }
     }
-    if(plot){
-      points(knots, col="#1b9e77", pch=19)
-      if(!is.null(crunch_ind)) points(knots[crunch_ind, ], col="#1b9e77", pch=4)
+
+    ## check the data
+    if(!is.null(data)){
+      # check that the points have x and y elements
+      stopifnot(c("x","y") %in% names(data))
+      point_check(bnd, data$x, data$y, "Data points")
+      if(plot) points(data, col="#7570b3", pch=19)
     }
-  }
 
-  ## check the data
-  if(!is.null(data)){
-    # check that the points have x and y elements
-    stopifnot(c("x","y") %in% names(data))
-    point_check(bnd, data$x, data$y, "Data points")
-    if(plot) points(data, col="#7570b3", pch=19)
+    return(TRUE)
   }
-
-  return(TRUE)
-}
