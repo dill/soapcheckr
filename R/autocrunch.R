@@ -14,6 +14,10 @@
 #' same value to `autocruncher()`.
 #' @param k If supplying `k` argument to `mgcv::gam()`, provide that
 #' same value to `autocruncher()`.
+#' @param xname Column name of x coordinate for the knots object
+#' @param yname Column name of y coordinate for the knots object
+#'
+#'
 #'
 #' @return A vector of the indices of all of the knots that either fall outside
 #' the boundary or too close to the boundary and will cause for the soap-film
