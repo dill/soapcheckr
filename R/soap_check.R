@@ -64,6 +64,7 @@ soap_check <- function(bnd, knots = NULL,
         dplyr::summarise(do_union = FALSE) |>
         sf::st_cast("POLYGON")
     }
+    # loop over an dconvert each object in the list
     bnd_poly <- lapply(bnd, make_bnd_poly)
 
     # function to see if two polygons intersect
@@ -71,7 +72,7 @@ soap_check <- function(bnd, knots = NULL,
       poly1 <- bnd[[this.ind[1]]]
       poly2 <- bnd[[this.ind[2]]]
 
-      rgeos::gIntersects(poly1, poly2)
+      sf::st_intersects(poly1, poly2, sparse = FALSE)
     }
     # apply over all the combinations
     inter <- apply(inds, 2, intersects, bnd=bnd_poly)
