@@ -1,16 +1,20 @@
-#' Check if boundary, knots, and data can be modelled using a soap-film smoother
+#' Check if boundary, knots, and data can be modeled using a soap-film smoother
 #'
-#'Setting up a soap film smoother is often a hard and frustrating process.
-#'This function checks that the boundary, knots, and data that you feed to
-#'a soap-film smoother are “correct”. The function will plot  the boundary,
-#'knots and data that are trying to be modeled to ensure that they are are
-#'appropriate
+#' Setting up a soap film smoother is often a hard and frustrating process.
+#' This function checks that the boundary, knots, and data that you feed to
+#' a soap-film smoother are “correct”. The function will plot  the boundary,
+#' knots and data that are trying to be modeled to ensure that they are are
+#' appropriate
+#'
 #' @param bnd A list with sub-lists that will be the boundary the soap-film smoother
-#' will smooth in.
+#' will smooth in. Coordinates need to be in meaningful units.
+#' For example, coordinates could be in UTMs as UTMs rely on metres.
 #' @param knots A dataframe with two columns that are the coordinates of the knots
-#' that are to be supplied to the soap-film smoother.
+#' that are to be supplied to the soap-film smoother. Coordinates need to be in
+#' meaningful units. For example, coordinates could be in UTMs as UTMs rely on metres.
 #' @param data A dataframe with two columns that are the coordinates of the data
-#' that are to be supplied to the soap-film smoother.
+#' that are to be supplied to the soap-film smoother. Coordinates need to be in
+#' meaningful units. For example, coordinates could be in UTMs as UTMs rely on metres.
 #' @param tol Tolerance value to check if boundaries are complete polygons.
 #' Sometimes tolerance needs to be increased (e.g., tol = 1e-6)
 #'
@@ -18,12 +22,20 @@
 #' by a soap-film smoother. Addtionally if supplying knots and/or data. It will warn
 #' the user which knots and/or data fall too close or outside the boundary.
 #'
+#' @examples
+#' # library(mgcv)
+#' # fsb <- list(fs.boundary())
+#' # soap_check(fsb)
+#'
+#' soap_check(sissabagama_lake_ls)
+#'
 #' @import dplyr
 #' @import graphics
 #' @import mgcv
 #' @import sf
 #' @import utils
 #' @export
+#'
 
 
 soap_check <- function(bnd,
