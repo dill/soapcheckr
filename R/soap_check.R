@@ -5,21 +5,21 @@
 # see Readme.md for details on how to use this
 
 
+#' @import dplyr
 #' @import graphics
 #' @import mgcv
-#' @import rgeos
 #' @import sf
-#' @import sp
 #' @import utils
 #' @export
 
 
-# need to added crs to this
+
 soap_check <- function(bnd, knots = NULL,
                        data = NULL,
-                       crs = NULL,
                        plot = TRUE,
-                       tol = sqrt(.Machine$double.eps)){
+                       tol = sqrt(.Machine$double.eps),
+                       x_name = "x",
+                       y_name = "y"){
 
   ## check that the boundary makes sense
   # check that boundary is a list
