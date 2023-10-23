@@ -131,7 +131,31 @@ if(plot){
       graphics::polygon(outer_bnd, col = red)
       # plot the other polygons on top in white
       lapply(other_bnd, graphics::polygon, col = "white")
+    } else {
+      # if the boundary is only 1 part, plotting is rather easier
+      plot(
+        outer_bnd,
+        type = "n",
+        main = "Red indicates main boundary of film surface",
+        ylab = "y",
+        xlab = "x",
+        asp = 1)
+
+      # plot the outer loop
+      graphics::polygon(outer_bnd, col = red)
+      # sapply(1:length(other_bnd))
+      col_n <- length(other_bnd)
+      # if(is.null(col)) {
+      cols <- terrain.colors(n = col_n)
+      # } else
+      # cols <- rainbow(n = col_n)
+      # other_bnd <-
+      # plot the other polygons on top in white
+      lapply(1:length(other_bnd), function(x) graphics::polygon(other_bnd[[x]],
+                                                                col = cols[[x]]))
     }
+  }
+}
 
   # function to check if points are inside the boundary
   point_check <- function(bnd, x, y, type){
