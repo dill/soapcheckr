@@ -203,42 +203,42 @@ if(plot){
                     "are outside the boundary."))
     }
   }
-    ## check the knots
-    if(!is.null(knots)){
-      # check that the points have x and y elements
-      # stopifnot(c("x", "y") %in% names(knots))
-      if(length(bnd) > 1) {
-        suppressWarnings(
-          point_check(bnd, knots, "Knots")
-        )
-      } else {
+  ## check the knots
+  if(!is.null(knots)){
+    # check that the points have x and y elements
+    # stopifnot(c("x", "y") %in% names(knots))
+    if(length(bnd) > 1) {
+      suppressWarnings(
         point_check(bnd, knots, "Knots")
-      }
-
-      crunch_ind <- autocruncher(bnd, knots,
-                                 xname = x_name,
-                                 yname = y_name)
-
-      if(!is.null(crunch_ind)){
-        warning(paste0("Knots ", paste(crunch_ind, collapse = ", "),
-                       "are outside the boundary."))
-      }
-      if(plot){
-        points(knots, col="#1b9e77", pch=19)
-        if(!is.null(crunch_ind)) points(knots[crunch_ind, ], col="#1b9e77", pch=4)
-      }
+      )
+    } else {
+      point_check(bnd, knots, "Knots")
     }
+
+    crunch_ind <- autocruncher(bnd, knots,
+                               xname = x_name,
+                               yname = y_name)
+
+    if(!is.null(crunch_ind)){
+      warning(paste0("Knots ", paste(crunch_ind, collapse = ", "),
+                     "are outside the boundary."))
+    }
+    if(plot){
+      points(knots, col="#1b9e77", pch=19)
+      if(!is.null(crunch_ind)) points(knots[crunch_ind, ], col="#1b9e77", pch=4)
+    }
+  }
 
   #DMILL colour "#1b9e77"
-    if(plot){
-      points(knots,
-             col = "black", pch = 21)
-      if(!is.null(crunch_ind)){
+  if(plot){
+    points(knots,
+           col = "black", pch = 21)
+    if(!is.null(crunch_ind)){
 
-        points(knots[crunch_ind, ],
-               col = "black", pch = 4)
-      }
+      points(knots[crunch_ind, ],
+             col = "black", pch = 4)
     }
+  }
 
   #     # check the data
   if(!is.null(data)){
@@ -261,4 +261,4 @@ if(plot){
   if(length(bnd) %in% 1){
     return(TRUE)
   }
-  }
+}
