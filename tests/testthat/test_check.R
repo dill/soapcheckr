@@ -157,7 +157,7 @@ test_that("check when the boundary overlaps",{
 context("Test Sissabagama Lake Polygons")
 test_that("Check when it has multiple polygons",{
   expect_true(
-    soap_check(sissabagama_lake_ls)
+    soap_check(sissabagama_lake_ls, plot = FALSE)
   )
 
 })
