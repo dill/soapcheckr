@@ -39,21 +39,29 @@ autocruncher <- function(bnd, knots, nmax = 200,
     badk
   } ## end crunch.knots
 
-
+  # ----- THIS NEEDS TO BE FIXED because if you don't supply autocrunch -----
+  # with x or ynames it nulls...considering this is used in soap_check it won't
+  # produced the plot...I have tried to figure out what this is doing and i'm stuck
+  # so instead I added x_name and y_name ot soap_check and added
+  # xname and yname arguments to when autocrunch is called
   # boundary names must be x and y!
   bnd <- lapply(bnd, function(x, xname, yname){
-    if(!all(names(x) == c("x", "y"))){
+    if(!all(names(x) %in% c("x", "y"))){
       x$x <- x[[xname]]
       x[[xname]] <- NULL
       x$y <- x[[yname]]
       x[[yname]] <- NULL
     }
     x
-  }, xname=xname, yname=yname)
+  }, xname = xname, yname = yname)
+
+  # there was a missing if statement that is why it was nulling out
+  if(!all(names(knots) %in% c("x", "y"))) {
   knots$x <- knots[[xname]]
   knots[[xname]] <- NULL
   knots$y <- knots[[yname]]
   knots[[yname]] <- NULL
+  }
 
   ## check boundary...
   if (!inherits(bnd,"list")) stop("bnd must be a list.")
