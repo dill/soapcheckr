@@ -13,6 +13,7 @@
 #' @export
 
 
+
 soap_check <- function(bnd, knots = NULL,
                        data = NULL,
                        plot = TRUE,
@@ -99,10 +100,6 @@ soap_check <- function(bnd, knots = NULL,
       islands <- all(islands)
     }
   }
-
-  ## plot what the boundary is
-  # highlighting the area to be modelled
-
   # if(all(islands)){
   # highlighting the area to be modeled
   if(plot){
@@ -156,7 +153,6 @@ soap_check <- function(bnd, knots = NULL,
       }
     }
   }
-
   # knots location check
   #  bnd supplied has to be list, data has to be dataframe object
 
@@ -174,9 +170,13 @@ soap_check <- function(bnd, knots = NULL,
       y <- data$y
       inout <- mgcv::inSide(bnd, x = x, y = y)
     } else{
+      # use sp::point.in.polygon
+      # need to use sf points here
+      # see ?point.in.polygon for returned codes, 1 is inside
+
       pip <- function(bnd, data){
-        # convert bndry into sf object, could possibly use bnd_poly here?
-        # would need to look mor into
+        # convert bndry into sf object
+
         bnd_comb <- bnd |>
           as.data.frame() |>
           st_as_sf(coords = c("x", "y")) |>
@@ -198,13 +198,13 @@ soap_check <- function(bnd, knots = NULL,
       # apply over the parts of the polygon
       inout <- pip(bnd = bnd[1], data)
     }
-
     if(!all(inout)){
       warning(paste(type, paste(which(!inout), collapse=", "),
                     "are outside the boundary."))
     }
   }
-  ## check the knots
+
+  # check the knots
   if(!is.null(knots)){
     # check that the points have x and y elements
     # stopifnot(c("x", "y") %in% names(knots))
@@ -224,7 +224,6 @@ soap_check <- function(bnd, knots = NULL,
       warning(paste0("Knots ", paste(crunch_ind, collapse = ", "),
                      "are outside the boundary."))
     }
-
     #DMILL colour "#1b9e77"
     if(plot){
       points(knots,
@@ -235,27 +234,27 @@ soap_check <- function(bnd, knots = NULL,
                col = "black", pch = 4)
       }
     }
+  }
+  #     # check the data
+  if(!is.null(data)){
+    stopifnot(c("x", "y") %in% names(data))
 
-    #     # check the data
-    if(!is.null(data)){
-      stopifnot(c("x", "y") %in% names(data))
+    # check that the points have x and y elements
+    point_check(bnd, data, "Data points")
+    if(plot)
+      #DMILL colour #7570b3
+      points(data, col = "black",
+             pch = 19)
+  }
 
-      # check that the points have x and y elements
-      point_check(bnd, data, "Data points")
-      if(plot)
-        #DMILL colour #7570b3
-        points(data, col = "black",
-               pch = 19)
-    }
-
-    if(length(bnd) > 1 & all(islands)){
-      return(TRUE)
-    }
-    if(length(bnd) > 1 & !all(islands)){
-      return(FALSE)
-    }
-    if(length(bnd) %in% 1){
-      return(TRUE)
-    }
+  if(length(bnd) > 1 & all(islands)){
+    return(TRUE)
+  }
+  if(length(bnd) > 1 & !all(islands)){
+    return(FALSE)
+  }
+  if(length(bnd) %in% 1){
+    return(TRUE)
   }
 }
+
