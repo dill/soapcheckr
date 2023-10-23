@@ -5,13 +5,13 @@
 # see Readme.md for details on how to use this
 
 
+#' @import dplyr
 #' @import graphics
 #' @import mgcv
-#' @import rgeos
 #' @import sf
-#' @import sp
 #' @import utils
 #' @export
+
 
 soap_check <- function(bnd, knots = NULL, data = NULL, plot = TRUE,
                        tol = sqrt(.Machine$double.eps)){
