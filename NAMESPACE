@@ -2,9 +2,9 @@
 
 export(autocruncher)
 export(soap_check)
+import(dplyr)
+import(grDevices)
 import(graphics)
 import(mgcv)
-import(rgeos)
 import(sf)
-import(sp)
 import(utils)
