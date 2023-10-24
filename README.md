@@ -1,4 +1,6 @@
-# Check whether a soap film smoother boundary and knots make sense
+# soapcheckr
+
+## Check whether a soap film smoother boundary and knots make sense
 
 Setting up a soap film smoother is often a hard and frustrating process.
 This function checks that the data that you feed to soap are “correct”.
@@ -9,23 +11,31 @@ The function also plots the area that will be modelled by the soap film
 smoother in red.
 
 To do all the spatial stuff, we require a couple of extra libraries:
-`rgeos` and `sp` (as well as `mgcv`).
+`rgeos` and `sp` (as well as `mgcv`). That will be loaded when
+installing `soapcheckr`.
+
+`{soapcheckr}` can be installed using the following code;
+
+``` r
+install.packages("devtools")
+devtools::install_github("benjaminhlina/soap_checker")
+```
 
 ## Ensuring the boundary is right
 
 ### Simple example with the “Ramsay horseshoe”
 
 ``` r
-source("soap_check.R")
+library(mgcv)
+library(soapcheckr)
+
 fsb <- list(fs.boundary())
 soap_check(fsb)
 ```
 
-![](.images/ramsay-1.png)<!-- -->
+![](./man/figures/ramsay-1.png)
 
-    ## [1] TRUE
-
-### “inside-out” "Ramsay horseshoe
+### “inside-out” “Ramsay horseshoe
 
 ``` r
 fsb_io <- fs.boundary()
@@ -35,9 +45,7 @@ fsb_io <- list(fsb_io,
 soap_check(fsb_io)
 ```
 
-![](.images/ramsay-inverse-1.png)<!-- -->
-
-    ## [1] TRUE
+![](./man/figures/ramsay-inverse-1.png)
 
 ### Knots
 
@@ -79,12 +87,9 @@ One can go through, one-by-one and remove the offending knots as
 `autocruncher`, which returns all of the offending knots at once:
 
 ``` r
-source("autocrunch.R")
 crunch_ind <- autocruncher(fsb, knots, k=30, xname="v", yname="w")
 crunch_ind
 ```
-
-    ## [1]  1 13 66 93
 
 We can see these knots are on the boundary are an issue (crosses):
 
@@ -94,7 +99,7 @@ points(knots)
 points(knots[crunch_ind, ], pch=4)
 ```
 
-![](.images/plot-crunch-1.png)<!-- -->
+![](./man/figures/plot-crunch-1.png)
 
 We can now simply remove them and fit our model successfully (via
 `knots[-crunch_ind, ]`).
@@ -105,14 +110,14 @@ for the soap film you need to provide that to `autocruncher` too.
 
 ## Other tips
 
-  - The script assumes that your spatial variable names are `x` and `y`.
-  - Make sure that your locations are in Northings/Eastings. Using
-    latitude and longitude will give strange results (as the soap film
-    smoother is isotropic so treats 1 unit change in either dimension is
-    equal, this isn’t true for lat/long\!).
-  - Sometimes you need to increase the tolerance (e.g `tol=1e-6`)
-  - Note that the boundary must be a `list` of `list`s or `data.frame`s.
-    So if you have a polygon boundary with your boundary vertices in it,
-    that must be wrapped in a `list`\!
+- The script assumes that your spatial variable names are `x` and `y`.
+- Make sure that your locations are in Northings/Eastings. Using
+  latitude and longitude will give strange results (as the soap film
+  smoother is isotropic so treats 1 unit change in either dimension is
+  equal, this isn’t true for lat/long!).
+- Sometimes you need to increase the tolerance (e.g `tol=1e-6`)
+- Note that the boundary must be a `list` of `list`s or `data.frame`s.
+  So if you have a polygon boundary with your boundary vertices in it,
+  that must be wrapped in a `list`!
 
 Written by David L Miller and released under the GPL (version 2).

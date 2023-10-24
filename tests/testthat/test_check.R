@@ -1,8 +1,8 @@
 # testing script to make sure that the code works
 
-library(testthat)
-
-source("soap_check.R")
+# library(testthat)
+#
+# source("soap_check.R")
 
 
 context("Silly checks")
