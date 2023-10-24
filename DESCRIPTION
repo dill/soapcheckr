@@ -3,19 +3,20 @@ Type: Package
 Title: Check knot locations used by soap film smoothers for GAMS
 Version: 0.1.0
 Author: David L. Miller
-Maintainer: Add in maintainers email <example@gmail.com>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Maintainer:  David L. Miller and Benjamin L. Hlina <benjamin.hlina@gmail.com>
+Description: Soapcheckr allows users to easily check if the boundary 
+        used and supplied to a soap-film smoother for Generalized Addtive Models
+        (GAMs) supported by the package {mgcv}. The package also allows for users
+        to assess if the knots and data points they want to supply the GAM will 
+        fit within the boundary. 
 Imports:
+    dplyr,
     graphics,
     mgcv,
-    rgeos,
     sf,
-    sp,
     utils
 Suggests: 
     data.table,
-    dplyr,
     ggplot2,
     gratia,
     testthat
@@ -24,3 +25,5 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Depends: 
+    R (>= 2.10)
