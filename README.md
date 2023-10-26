@@ -7,18 +7,17 @@ This function checks that the data that you feed to soap are “correct”.
 Feed it our boundary and optionally knots and data and the function will
 show you what soap will model.
 
-The function also plots the area that will be modelled by the soap film
+The function also plots the area that will be modeled by the soap film
 smoother in red.
 
 To do all the spatial stuff, we require a couple of extra libraries:
-`rgeos` and `sp` (as well as `mgcv`). That will be loaded when
-installing `soapcheckr`.
+`sf` and `mgcv`). That will be loaded when installing `soapcheckr`.
 
 `{soapcheckr}` can be installed using the following code;
 
 ``` r
 install.packages("devtools")
-devtools::install_github("benjaminhlina/soap_checker")
+devtools::install_github("dill/soap_checker")
 ```
 
 ## Ensuring the boundary is right
