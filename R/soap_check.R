@@ -217,7 +217,12 @@ soap_check <- function(bnd,
           dplyr::summarise(do_union = FALSE) |>
           st_cast("POLYGON")
 
-
+        if(!all(names(data) %in% c("x", "y"))) {
+          data$x <- data[[x_name]]
+          data[[x_name]] <- NULL
+          data$y <- data[[y_name]]
+          data[[y_name]] <- NULL
+        }
         knt_sf <- data |>
           st_as_sf(coords = c("x", "y"))
 
