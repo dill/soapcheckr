@@ -22,7 +22,7 @@ Setting up a soap film smoother is often a hard and frustrating process. This fu
 
 The function also plots the area that will be modeled by the soap film smoother in red.
 
-To do all the spatial stuff, we require a couple of extra libraries: `sf` and `mgcv`). That will be loaded when installing `soapcheckr`. 
+To do all the spatial stuff, we require a couple of extra libraries: `{sf}` and `{mgcv}`. That will be loaded when installing `{soapcheckr}`. 
 
 `{soapcheckr}` can be installed using the following code; 
 
