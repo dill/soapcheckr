@@ -234,8 +234,8 @@ soap_check <- function(bnd,
       inout <- pip(bnd = bnd[1], data)
     }
     if(!all(inout)){
-      warning(paste(type, paste(which(!inout), collapse=", "),
-                    "are outside the boundary."))
+      warning(paste(type, paste(which(!inout), collapse = ", "),
+                    " are outside the boundary."))
     }
   }
 
