@@ -257,7 +257,7 @@ soap_check <- function(bnd,
 
     if(!is.null(crunch_ind)){
       warning(paste0("Knots ", paste(crunch_ind, collapse = ", "),
-                     "are outside the boundary."))
+                     " are outside the boundary."))
     }
     #DMILL colour "#1b9e77"
     if(plot){
