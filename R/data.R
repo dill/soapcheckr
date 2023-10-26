@@ -1,3 +1,17 @@
+#' Sissabagama Lake located in northern Wisconsin
+#'
+#' Sissabagama Lake located in northern Wisconsin. The original shapefile was derived from
+#' the Wisconsin DNR's watershed database. Latitude and longitude are in UTM zone 15N.
+#'
+#'
+#' @format Simple feature collection with 1 features and 23 fields:
+#'  \describe{
+#'    \item{geometry}{POLYGON}
+#' }
+#'
+"sissabagama_lake_sf"
+
+
 #' The boundary list of Sissabagama Lake
 #'
 #' A list with sub-lists containing the latitude and longitude of each polygon that
