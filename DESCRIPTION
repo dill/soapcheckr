@@ -23,7 +23,6 @@ Imports:
 Suggests: 
     data.table,           
     knitr,
-    
     rmarkdown,
     testthat
 License: GPL-3 | file LICENSE
