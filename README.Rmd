@@ -28,7 +28,7 @@ To do all the spatial stuff, we require a couple of extra libraries: `{sf}` and 
 
 ```{r, eval = FALSE}
 install.packages("devtools")
-devtools::install_github("dill/soap_checker")
+devtools::install_github("dill/soap_checker", build_vignettes = TRUE)
 ```
 
 
