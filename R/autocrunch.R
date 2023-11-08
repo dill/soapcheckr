@@ -154,11 +154,40 @@ autocruncher <- function(bnd,
   ## so grid is now nx by ny, cell size is dx by dy (but dx=dy)
   ## x0, y0 is "lower left" cell centre
 
-  ## Create grid index G
-  bnc <- mgcv:::bnd2C(bnd) ## convert boundary to form required in C code
+  ## Create grid index G using function mgcv:::bnd2C. I was able to get
+  ## the function using getAnywhere(bnd2C.)
+
+  copy.bnd2C <- function(bnd){
+    n.loop <- 1
+    if (is.null(bnd$x)) {
+      bn <- list(x = bnd[[1]]$x, y = bnd[[1]]$y)
+      n.loop <- length(bnd)
+      if (length(bnd) > 1)
+        for (i in 2:n.loop) {
+          bn$x <- c(bn$x, NA, bnd[[i]]$x)
+          bn$y <- c(bn$y, NA, bnd[[i]]$y)
+        }
+      bnd <- bn
+    }
+    lowLim <- min(c(bnd$x, bnd$y), na.rm = TRUE) - 1
+    ind <- is.na(bnd$x) | is.na(bnd$y)
+    bnd$x[ind] <- bnd$y[ind] <- lowLim - 1
+    bnd$n <- length(bnd$x)
+    if (bnd$n != length(bnd$y))
+      stop("x and y must be same length")
+    bnd$breakCode <- lowLim
+    bnd$n.loop <- n.loop
+    bnd
+  }
+  bnc <- copy.bnd2C(bnd) ## convert boundary to form required in C code
 
   G <- matrix(0, ny, nx)
   nb <- rep(0,bnc$n.loop)
+
+  # extract function mgcv:::C_boundary using getAnywhere() and build it within
+  # autocurncher
+  # C_boundary <-
+
 # bring in C_boundary using mgcv:::C_boundary
   oo <- .C(mgcv:::C_boundary,
            G = as.integer(G),
@@ -169,11 +198,12 @@ autocruncher <- function(bnd,
            dx = as.double(dx),
            dy = as.double(dy),
            nx = as.integer(nx),
-           as.integer(ny),
+           ny = as.integer(ny),
            x = as.double(bnc$x),
            y = as.double(bnc$y),
            breakCode = as.double(bnc$breakCode),
-           n = as.integer(bnc$n), nb = as.integer(nb))
+           n = as.integer(bnc$n),
+           nb = as.integer(nb))
 
   ret <- list(G=matrix(oo$G,ny,nx),nb=oo$nb,d=oo$d[oo$d >= 0],
               x0=x0,y0=y0,dx=dx,dy=dy,bnd=bnd)
