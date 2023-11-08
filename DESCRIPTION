@@ -16,10 +16,12 @@ Imports:
     sf,
     utils
 Suggests: 
-    data.table,
+    broom.mixed,
+    data.table,           
     ggplot2,
     gratia,
     knitr,
+    purrr,
     rmarkdown,
     testthat
 License: GPL-3 | file LICENSE
