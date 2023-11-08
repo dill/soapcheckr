@@ -13,16 +13,17 @@ Imports:
     broom.mixed,
     fitdistrplus,
     dplyr,
+    ggplot2, 
     graphics,
+    gratia,
     mgcv,
+    purrr,
     sf,
     utils
 Suggests: 
     data.table,           
-    ggplot2,
-    gratia,
     knitr,
-    purrr,
+    
     rmarkdown,
     testthat
 License: GPL-3 | file LICENSE
