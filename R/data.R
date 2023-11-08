@@ -68,3 +68,19 @@
 #' }
 #'
 "overlap_polygons"
+
+
+#' Sampled bathymetry points for Sissabagama Lake
+#'
+#' The latitude and longitude of sampled depth derived from bathymetric map from the
+#' [Wisconsin DNR](https://apps.dnr.wi.gov/lakes/lakepages/LakeDetail.aspx?wbic=2393500) for
+#' Sissabagama Lake in northern Wisconsin.
+#'
+#' @format A dataframe containing 445 rows and 3 variables:
+#'  \describe{
+#'    \item{x}{The longitude of each sample}
+#'    \item{y}{The latitude of each sample}
+#'    \item{depth}{The latitude of each sample}
+#' }
+#'
+"sissabagama_bath"
