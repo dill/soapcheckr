@@ -17,7 +17,7 @@ To do all the spatial stuff, we require a couple of extra libraries:
 
 ``` r
 install.packages("devtools")
-devtools::install_github("dill/soap_checker")
+devtools::install_github("dill/soap_checker", build_vignettes = TRUE)
 ```
 
 ## Ensuring the boundary is right
