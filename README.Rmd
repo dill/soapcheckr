@@ -28,7 +28,14 @@ To do all the spatial stuff, we require a couple of extra libraries: `{sf}` and 
 
 ```{r, eval = FALSE}
 install.packages("devtools")
-devtools::install_github("dill/soap_checker", build_vignettes = TRUE)
+devtools::install_github("dill/soap_checker")
+```
+
+Next load {soapcheckr} and walk through the vignette to see how to use the functions 
+
+```{r, eval = FALSE}
+library(soapcheckr)
+vignette("how_to_use_soapcheckr")
 ```
 
 

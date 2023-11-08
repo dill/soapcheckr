@@ -17,7 +17,15 @@ To do all the spatial stuff, we require a couple of extra libraries:
 
 ``` r
 install.packages("devtools")
-devtools::install_github("dill/soap_checker", build_vignettes = TRUE)
+devtools::install_github("dill/soap_checker")
+```
+
+Next load {soapcheckr} and walk through the vignette to see how to use
+the functions
+
+``` r
+library(soapcheckr)
+vignette("how_to_use_soapcheckr")
 ```
 
 ## Ensuring the boundary is right
