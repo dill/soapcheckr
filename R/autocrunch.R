@@ -102,7 +102,36 @@ autocruncher <- function(bnd,
     if (length(k)==1) k <- rep(k,n.loops)
     else stop("lengths of k and bnd are not compatible.")
   }
-  bnd <- mgcv:::process.boundary(bnd) ## add distances and close any open loops
+
+  # extracted mgcv:::process.boundary() using getAnywhere()
+  copy.process.boundary <- function(bnd){
+    for (i in 1:length(bnd)) {
+      x <- bnd[[i]]$x
+      y <- bnd[[i]]$y
+      n <- length(x)
+      if (length(y) != n)
+        stop("x and y not same length")
+      if (x[1] != x[n] || y[1] != y[n]) {
+        n <- n + 1
+        x[n] <- x[1]
+        y[n] <- y[1]
+        if (inherits(bnd[[i]], "data.frame"))
+          bnd[[i]][n, ] <- bnd[[i]][1, ]
+        else {
+          bnd[[i]]$x[n] <- x[1]
+          bnd[[i]]$y[n] <- y[1]
+          if (!is.null(bnd[[i]]$f))
+            bnd[[i]]$f[n] <- bnd[[i]]$f[1]
+        }
+      }
+      len <- c(0, sqrt((x[1:(n - 1)] - x[2:n])^2 + (y[1:(n -
+                                                           1)] - y[2:n])^2))
+      bnd[[i]]$d <- cumsum(len)
+    }
+    bnd
+  }
+
+  bnd <- copy.process.boundary(bnd) ## add distances and close any open loops
 
   ## create grid on which to solve Laplace equation
   ## Obtain grid limits from boundary 'bnd'....
