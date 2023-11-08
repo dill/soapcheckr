@@ -10,13 +10,14 @@ Description: Soapcheckr allows users to easily check if the boundary
         The package also allows for users to assess if the knots and data points 
         they want to supply the GAM will fit within the boundary. 
 Imports:
+    broom.mixed,
+    fitdistrplus,
     dplyr,
     graphics,
     mgcv,
     sf,
     utils
 Suggests: 
-    broom.mixed,
     data.table,           
     ggplot2,
     gratia,
