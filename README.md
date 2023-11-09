@@ -8,7 +8,7 @@ data that you feed to a soap are “correct”. The functions in the package
 will also plots the area that will be modeled by the soap film smoother
 in red, and knots and/or data as circles as viable locations. Any
 circles that have a X through them are considered inadequte and will
-need to be removed..
+need to be removed.
 
 To do the spatial analysis, we require a couple of extra libraries:
 [{sf}](https://r-spatial.github.io/sf/) and
