@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 ### Our Objectives
 
-The purpose of this vignette is to demonstrate an effective workflow while using [{soapcheckr}](https://github.com/dill/soap_checker) to efficiently make a soap-film smoother for a Generalized Additive Model (GAM) using the package [{mgcv}](https://cran.r-project.org/web/packages/mgcv/index.html). Soap-film smoothers are really useful when trying to model a variable within a 3-dimensional space (e.g., bathymetry of a lake; [Gavin Simpson Blog Post](https://fromthebottomoftheheap.net/2016/03/27/soap-film-smoothers/)). They can be used for all sorts of data but are quite complex and difficult to setup. [{soapcheckr}](https://github.com/dill/soap_checker) tries to make this process a little easier. This vignette will walk through several different examples using example data sets loaded when loading [{soapcheckr}](https://github.com/dill/soap_checker) and [{mgcv}](https://cran.r-project.org/web/packages/mgcv/index.html). 
+The purpose of this vignette is to demonstrate an effective workflow while using [{soapcheckr}](https://github.com/dill/soap_checker) to efficiently make a soap-film smoother for a Generalized Additive Model (GAM) using the package [{mgcv}](https://cran.r-project.org/web/packages/mgcv/index.html). Soap-film smoothers are really useful when trying to model a variable within a 3-dimensional space (e.g., bathymetry of a lake; [Gavin Simpson Blog Post](https://fromthebottomoftheheap.net/2016/03/27/soap-film-smoothers/)). They can be used for all sorts of data but are quite complex and difficult to setup. [{soapcheckr}](https://github.com/dill/soap_checker) tries to make this process a little easier. This vignette will walk through several different examples using example data sets loaded when loading [{soapcheckr}](https://github.com/dill/soap_checker) and [{mgcv}](https://cran.r-project.org/web/packages/mgcv/index.html). We strongly encourage going through both examples, as the first provides a general background on soap-films within a simple boundary and the second a more complex example within a more complex boundary. 
 
 ### Example 1: Making a soap-film smoother for a Simple boundary - Ramsay's horseshoe 
 
@@ -27,7 +27,7 @@ If we were wanting to make a soap-film smoother for a boundary that does not hav
 
 We will use some data manipulation functions from [{dplyr}](https://dplyr.tidyverse.org/) and some spatial functions from [{sf}](https://r-spatial.github.io/sf/) to first check if we can make a soap-film using [{soapcheckr}](https://github.com/dill/soap_checker)) and second to run a GAM using [{mgcv}](https://cran.r-project.org/web/packages/mgcv/index.html) with a soap-film smoother.
 
-```{r setup, message = FALSE}
+```{r setup, message = FALSE, warning = FALSE}
 {
   library(broom.mixed)
   library(fitdistrplus)
@@ -169,7 +169,7 @@ We can see the model fits well and is appropriate for the example data. Now that
 More than likely you will have your boundary as a `sf` object. To convert that `sf` object into the boundary list needed by {mgcv} and {soapcheckr}, we will have to do some conversions. First that boundary might not be in the correct coordinate reference system (CRS). To create a soap-film smoother we need to use a CRS that for one unit change in either dimension (i.e., x and y) are equal. For example using latitude and longitude in decimal degrees with a WGS84 project will not work because one unit of change in either direction is not equal. Therefore, we will need to use a CRS that is based on an equal units. The most common CRS to do this is UTMs, if the boundary is already in UTMs great, if not see below 
 
 #### Step 1: Convert CRS 
-The more complex boundary that we will load through {soapcheckr} is a lake from northern Wisconsin. I grew up fishing on this lake that intially got me interested in aquatic ecosystems and fish. This lake falls within UTM zone 15N that can also be refereed to as ESPG: 32615, but your boundary will more than likely fall into a different CRS. You can look up ESPG codes [here](https://epsg.io/).  
+The more complex boundary that we will load through {soapcheckr} is a lake from northern Wisconsin, Sissabagama Lake. I grew up fishing on this lake which is where I initially fueled my passion and interest in aquatic ecosystems, fish, and fisheries management. This lake falls within UTM zone 15N that can also be refereed to as ESPG: 32615, but your boundary will more than likely fall into a different CRS. You can look up ESPG codes [here](https://epsg.io/).  
 
 ```{r sissabagama lake crs, message = FALSE}
 sissabagama_lake_sf <- sissabagama_lake_sf %>% 
@@ -204,7 +204,7 @@ bnd_pt <- bnd_pt_sf %>%
   )
 ```
 
-We now have a list of dataframes split by  each polygon's x and y coordinates that have had the `id` column removed. We then need to create a vector that is `id` number of each polygon. In this case its 1-5. You will need to change the 5 to whatever number of polygons your boundary has (e.g., 20).
+We now have a list of dataframes split by  each polygon's x and y coordinates that have had the `id` column removed. We then need to create a vector that is `id` number of each polygon. In this case its 1-5, we can use `length()` to easily create the end of our numerical vector. 
 
 We will then iterate over our list and bind them all into together to get our lists and lists of our polygon boundaries. 
 
@@ -221,11 +221,11 @@ We will check the boundary list using `soap_check()`
 ```{r check more complex boundary}
 soap_check(sissabagama_bnd_ls)
 ```
-`soap_check` returns back `TRUE` so our more complex boundary will work for our soap-film smoother.
+`soap_check` returns back `TRUE` so our more complex boundary will work for our soap-film smoother. One thing that I've always loved about this lake is how it looks like person! 
 
-#### Step 4: Make knots for a more complex boundary using [{sf}]()
+#### Step 4: Make knots for a more complex boundary using [{sf}](https://r-spatial.github.io/sf/)
 
-We can use `st_make_grid()` to create a grid of equally spaced points across the boundary box of our example `sf` object of sissabagama lake. 
+We can use `st_make_grid()` to create a grid of equally spaced points across the boundary box of our example `sf` object of Sissabagama Lake. 
 
 ```{r make knot grid, message = FALSE}
 lake_grid <- sissabagama_lake_sf %>%
@@ -237,11 +237,11 @@ st_geometry(lake_grid) <- "geometry"
 
 We then will remove all the knots that fall outside the boundary by using `st_intersection()`. 
 
-```{r remove all knots that are outside boundary, message = FALSE}
+```{r remove all knots that are outside boundary, message = FALSE, warning = FALSE}
 lake_intesects <- st_intersection(sissabagama_lake_sf, lake_grid)
 ```
 
-Next we will create our knot dataframe by extracting the lon and lat of each point and then dropping the `geometry column` and selecting our `lon` and `lat` columns. 
+Next we will create our knot dataframe by extracting the lon and lat of each point and then dropping the `geometry` and selecting our `lon` and `lat` columns. 
 
 ```{r make knot dataframe, message = FALSE}
 lake_knots <- lake_intesects %>%
@@ -281,8 +281,7 @@ Congratulations! We have knots and a boundary that we can supply our model.
 
 ### Step 5: Sissabagama example dataset 
 
-We will bring our sampled depth at given locations for Sissabagama lake. This data was generated by referencing the contour map supplied by the [Wisconsin DNR](https://apps.dnr.wi.gov/lakes/lakepages/LakeDetail.aspx?wbic=2393500). We will first remove depth to check if the data points all fall within our boundary.  
-
+We will bring our sampled depths at given locations for Sissabagama lake. This data was generated by referencing the contour map supplied by the [Wisconsin DNR](https://apps.dnr.wi.gov/lakes/lakepages/LakeDetail.aspx?wbic=2393500). We will first remove depth to check if the data points all fall within our boundary using `soap_check()`.
 
 ```{r remove depth for soap_check}
 sissabagama_bath_pt <- sissabagama_bath %>% 
@@ -290,22 +289,21 @@ sissabagama_bath_pt <- sissabagama_bath %>%
 
 soap_check(sissabagama_bnd_ls, data = sissabagama_bath_pt)
 ```
-Then we will assess the data to see what distribution the data likely will fit using functions from [{fitdistrplus}](https://cran.r-project.org/web/packages/fitdistrplus/index.html). 
+Then we will assess the data to evaluate distribution model should fit the data to. We will use functions from [{fitdistrplus}](https://cran.r-project.org/web/packages/fitdistrplus/index.html). 
 ```{r check skewness and kurtosis}
 depths <- sissabagama_bath$depth
 descdist(depths)
 ```
-
-We can see that skewness and kurtosis indicate that a Gamma distribution will likely fit. 
+Skewness and kurtosis of our example data indicates that a model using a Gamma distribution will likely fit. 
 ```{r check distr}
 fit_gamma <- fitdist(depths, distr = "gamma", method = "mme")
 plot(fit_gamma)
 ```
 
-We can see the data appears that depth data will likely  fit a gamma distribution.
+We can see the depth data will likely fit a gamma distribution and therefore our GAM will use a Gamma error distribution.
 
 ### Step 6: Run the model 
-Prior to running our GAM with a soap film smoother we need to add one last thing to our boundary list. We need to add the variable `f` to every boundary polygon within our boundary list. This variable indicates to the soap-film smoother that our response variable is `0` right at the boundary. 
+Prior to running our GAM with a soap film smoother we need to add one last thing to our boundary list. We need to add the variable `f` to every boundary polygon within our boundary list. This variable indicates to the soap-film smoother that our response variable is `0` right at the boundary, otherwise the soapfilm smoother does not know what to do when it hits the boundary.  
 ```{r add f to our boundary list}
 names(lake_knots) <- c("x", "y")
 
@@ -313,24 +311,27 @@ sissabagama_bnd_ls <- lapply(nr,
                              function(n)
                                sissabagama_bnd_ls[[n]] <- c(
                                  sissabagama_bnd_ls[[n]],
-                                 list(f = rep(0, 
-                                              length(sissabagama_bnd_ls[[n]]$x)
-                                 )
+                                 list(f = rep(0, length(sissabagama_bnd_ls[[n]]$x))
                                  )
                                )
 )
 ```
 
- 
 We can now successfully run our GAM with a soap-film smoother.
 
-```{r model our depth}
+```{r model our depth, warning = FALSE}
 m1 <- gam(depth ~ s(x, y,
-                bs = "so",
-                xt = list(bnd = sissabagama_bnd_ls)),
-          family = Gamma(link = "log"),
+                    bs = "so",
+                    xt = list(bnd = sissabagama_bnd_ls)),
+          family = Gamma(link = "identity"),
           knots = lake_knots,
           data = sissabagama_bath)
+```
+
+We can evaluate the main and individual effects of the model using `anova()` and `summary()`
+```{r check main effects}
+anova(m1)
+summary(m1)
 ```
 
 We can evaluate the partial effects of the model using `draw()` from `{gratia}`
@@ -341,7 +342,9 @@ We can evaluate how well the model fit is to the data using `appraise()` also fr
 ```{r check model fit for m1}
 appraise(m1)
 ```
-### Step 7: Plot our predicted results. 
+
+### Step 7: Plot our predicted results 
+
 We will first create a 10 m grid from our `sf` object of our boundary. Depending on the size of the boundary you can change the grid size distance to whatever distance makes sense (i.e., if the system is large you may want to increase the `cellsize`). 
 ```{r create 10m grid to efficiently predict over the boundary}
 lake_pred <- sissabagama_lake_sf %>%
@@ -365,15 +368,14 @@ lake_pred_df <- lake_pred %>%
   st_drop_geometry()
 
 ```
-We then can use the function `augment()` from the package [{broom.mixxed}](https://cran.r-project.org/web/packages/broom.mixed/index.html) to predict depth of the lake at a given latitude and longitude. We will also need to back transform the fitted data using the e. 
+We then can use the function `augment()` from the package [{broom.mixed}](https://cran.r-project.org/web/packages/broom.mixed/index.html) to predict depth of the lake at a given latitude and longitude.
 
-```{r predict using augment from broom.mixxed}
+```{r predict using augment from broom.mixed, message = FALSE}
 pred <- augment(m1, newdata = lake_pred_df)
 pred <- pred %>% 
   mutate(
-    lower = exp(1) ^ (.fitted - 1.96 * .se.fit),
-    higher = exp(1) ^ (.fitted + 1.96 * .se.fit),
-    .fitted = exp(1) ^ .fitted
+    lower = (.fitted - 1.96 * .se.fit),
+    higher = (.fitted + 1.96 * .se.fit)
   )
 glimpse(pred)
 ```
@@ -403,3 +405,4 @@ ggplot() +
        y = "Latitude")
 
 ```
+Congratulations we have made a soap film GAM that takes in account the boundaries within the lake to estimate the bathymetry of the lake. For this example I used bathymetry, but you can use this workflow to model any type of variable (e.g., fish and/or animal movement, wind speed, water quality, ect.)

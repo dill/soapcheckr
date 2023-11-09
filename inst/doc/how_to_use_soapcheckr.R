@@ -5,7 +5,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ----setup, message = FALSE-----------------------------------------------------------------------------------------------------------
+## ----setup, message = FALSE, warning = FALSE------------------------------------------------------------------------------------------
 {
   library(broom.mixed)
   library(fitdistrplus)
@@ -132,7 +132,7 @@ lake_grid <- sissabagama_lake_sf %>%
 
 st_geometry(lake_grid) <- "geometry"
 
-## ----remove all knots that are outside boundary, message = FALSE----------------------------------------------------------------------
+## ----remove all knots that are outside boundary, message = FALSE, warning = FALSE-----------------------------------------------------
 lake_intesects <- st_intersection(sissabagama_lake_sf, lake_grid)
 
 ## ----make knot dataframe, message = FALSE---------------------------------------------------------------------------------------------
@@ -184,20 +184,22 @@ sissabagama_bnd_ls <- lapply(nr,
                              function(n)
                                sissabagama_bnd_ls[[n]] <- c(
                                  sissabagama_bnd_ls[[n]],
-                                 list(f = rep(0, 
-                                              length(sissabagama_bnd_ls[[n]]$x)
-                                 )
+                                 list(f = rep(0, length(sissabagama_bnd_ls[[n]]$x))
                                  )
                                )
 )
 
-## ----model our depth------------------------------------------------------------------------------------------------------------------
+## ----model our depth, warning = FALSE-------------------------------------------------------------------------------------------------
 m1 <- gam(depth ~ s(x, y,
-                bs = "so",
-                xt = list(bnd = sissabagama_bnd_ls)),
-          family = Gamma(link = "log"),
+                    bs = "so",
+                    xt = list(bnd = sissabagama_bnd_ls)),
+          family = Gamma(link = "identity"),
           knots = lake_knots,
           data = sissabagama_bath)
+
+## ----check main effects---------------------------------------------------------------------------------------------------------------
+anova(m1)
+summary(m1)
 
 ## ----check partial effects------------------------------------------------------------------------------------------------------------
 draw(m1)
@@ -224,13 +226,12 @@ lake_pred_df <- lake_pred %>%
   st_drop_geometry()
 
 
-## ----predict using augment from broom.mixxed------------------------------------------------------------------------------------------
+## ----predict using augment from broom.mixed, message = FALSE--------------------------------------------------------------------------
 pred <- augment(m1, newdata = lake_pred_df)
 pred <- pred %>% 
   mutate(
-    lower = exp(1) ^ (.fitted - 1.96 * .se.fit),
-    higher = exp(1) ^ (.fitted + 1.96 * .se.fit),
-    .fitted = exp(1) ^ .fitted
+    lower = (.fitted - 1.96 * .se.fit),
+    higher = (.fitted + 1.96 * .se.fit)
   )
 glimpse(pred)
 
