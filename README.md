@@ -38,10 +38,10 @@ vignette("how_to_use_soapcheckr")
   `autocruncher()` to be the same as your planned value in `gam()` for
   your soap film smoother
 - The functions assumes that your spatial variable names are `x` and `y`
-  unless you supply the naming arugments with the column names from your
+  unless you supply the naming arguments with the column names from your
   data.
 - Make sure that your locations are in Northings/Eastings, (e.g., UTMs).
-  Using latitude and longitude (e.g., decmial degree) will give strange
+  Using latitude and longitude (e.g., decimal degree) will give strange
   results (as the soap film smoother is isotropic so treats 1 unit
   change in either dimension is equal, this isn’t true for lat/long!).
 - Sometimes you need to increase the tolerance (e.g `tol = 1e-6`)
