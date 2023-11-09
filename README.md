@@ -5,9 +5,9 @@
 Setting up a soap film smoother is often a hard and frustrating process.
 This packages provides functions that checks the boundary, knots, and
 data that you feed to a soap are “correct”. The functions in the package
-will also plots the area that will be modeled by the soap film smoother
+will also plot the area that will be modeled by the soap film smoother
 in red, and knots and/or data as circles as viable locations. Any
-circles that have a X through them are considered inadequte and will
+circles that have a X through them are considered inadequate and will
 need to be removed.
 
 To do the spatial analysis, we require a couple of extra libraries:
