@@ -2,9 +2,9 @@
 title: "How to use Soapcheckr"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{How to use Soapcheckr}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+ %\VignetteIndexEntry{How to use Soapcheckr}
+ %\VignetteEngine{knitr::rmarkdown}
+ %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -49,24 +49,24 @@ We will load Ramsey's horseshoe from [{mgcv}](https://cran.r-project.org/web/pac
 fsb <- list(fs.boundary())
 ```
 
-We can then can check the boundary using `soap_check()`
+We can then can check the boundary using `soap_check()`.
 ```{r check ramsays horseshoe}
 soap_check(fsb)
 ```
 
-We can see that `soap_check()` returns `TRUE` indicating that we can use this boundary to make a soap-film smoother. `soap_check()` will assess if the boundary supplied has any overlapping polygons and in the correct structure for a soap-film smoother to be run in `{mgcv}`. 
+We can see that `soap_check()` returns `TRUE` indicating that we can use this boundary to make a soap-film smoother. `soap_check()` will assess if the boundary supplied, has any overlapping polygons and is in the correct structure for a soap-film smoother to be run in `{mgcv}`. 
 
-#### Step 3: Check if evenly spaced knots and data will work for soap-film smoother
+#### Step 3: Check if the data and the evenly spaced knots fall within the boundary
 
-Sometimes knots are too close to the boundary, resulting with errors from the model that look like:
+Sometimes knots are too close to the boundary, resulting with errors from the model that look like this:
 
 ```
 Error in crunch.knots(ret$G, knots, x0, y0, dx, dy) :
 knot 1 is on or outside boundary
 ```
-It can be tedious and annoying to try to figure out which knots and/or data points are causing issues. The below work flow will demonstrate using an example knots and dataset of how to effectively remove knots and/or data points that result in the above error within the GAM. 
+It can be tedious and annoying to try to figure out which knots and/or data points are causing issues. The below workflow will demonstrate how to effectively remove knots and/or data points that result in the above error within the GAM. 
 
-We will use `expand.grid()` to create an equally spaced grid of knots. Then we remove knots outside of the boundary using `inSide()` from [{mgcv}](). There still may be knots that are too close to the boundary that will cause for a soap-film smoother to not work. 
+We will use `expand.grid()` to create an equally spaced grid of knots. Then we remove knots outside of the boundary using `inSide()` from [{mgcv}](https://cran.r-project.org/web/packages/mgcv/index.html). There still may be knots that are too close to the boundary that will cause for a soap-film smoother to not work. 
 
 ```{r build fsb knots, message = FALSE}
 # create knots 
@@ -83,7 +83,7 @@ ind <- inSide(fsb, x = x, y = y)
 knots <- knots[ind, ]
 ```
 
-We will also create some fake data to test the model. We will use a uniform distribution to make our test data and a response variable will be created using `fs.test()`. We will use `inSide()` to remove data that fall outside our boundary 
+We will also create some fake data to test the model. We will use a uniform distribution to make our test data and a response variable will be created using `fs.test()`. We will use `inSide()` to remove data that fall outside our boundary.
 
 ```{r build fake data, message = FALSE}
 set.seed(0)
@@ -108,12 +108,12 @@ dat <- data.frame(z = z[ind],
                   y = y[ind])
 ```
 
-However, there may still be knots and/or data points that are too close to the boundary.
-One can go through, one-by-one and remove the offending knots as `crunch.knots()` finds them, but that’s a bit tedious. Enter `soap_check()` and `autocruncher()`, with the former allowing one to visually check what knots and/or data will causes issues and the latter identifying the index location of the offending knots or data points. If the knot dataframe has columns names other than `x` and `y`, we need to supply `soapcheckr()` those names using the arguments `x_name` and `y_name`, respectfully. 
+However, there still may be knots and/or data points that are too close to the boundary.
+One can go through, one-by-one and remove the offending knots as `crunch.knots()` finds them, but that’s a bit tedious. Enter `soap_check()` and `autocruncher()`, with the former allowing one to visually check what knots and/or data will causes issues and the latter identifying the index location of the offending knots or data points. If the knot dataframe has column names other than `x` and `y`, we need to supply `soapcheckr()` those names using the arguments `x_name` and `y_name`, respectfully. 
 ```{r check our knots}
 soap_check(fsb, knots = knots)
 ```
-We can see that there four offending knots that we can subsequently remove using `autocruncher()`. The function will return the indices of knots that would cause issues. If the  knot dataframe has columns names other than `x` and `y`, we need supply `autocruncher()` those names using the arguments `xname` and `yname`, respectfully. Note that you need to set the `k` argument in `autocruncher()` to be the same as your planned value in `gam()` and if you set the `nmax()` parameter for the soap film you need to provide that to `autocruncher()` too.
+We can see that there four offending knots that we can subsequently remove using `autocruncher()`. This function will return the indices of the knots that would cause issues. If the knot dataframe has column names other than `x` and `y`, we need supply those column names to the arguments `xname` and `yname`, respectfully. Note that you need to set the `k` and `nmax` arguments in `autocruncher()` to be the same as your planned value in `gam()`.
 ```{r remove knots that are offending}
 crunch_index <- autocruncher(fsb, knots, k = 30)
 crunch_index
@@ -155,7 +155,7 @@ Next, check main effects of the model.
 ```{r check main effects of model, eval = FALSE}
 anova(m)
 ```
-Then check the model effects using `draw()` from [{gratia}](https://gavinsimpson.github.io/gratia/)
+Then visually check the model effects using `draw()` from [{gratia}](https://gavinsimpson.github.io/gratia/)
 ```{r draw model effects}
 draw(m)
 ```
@@ -163,21 +163,21 @@ Lastly, check the model fit using `appraise()` from [{gratia}](https://gavinsimp
 ```{r check model fit}
 appraise(m)
 ```
-We can see the model fits well and is appropriate for the example data. Now that you've walked through a simple boundary, we will go to a more complex boundary example. More than likely you will be working with a complex boundary. The below walk through can applied to a simple boundary as well. 
+We can see the model fits well and is appropriate for the example data. Now that you've walked through a simple boundary, we will go to a more complex boundary example. More than likely you will be working with a complex boundary. The below walk through can be applied to a simple boundary as well. 
 
 ### Example 2: Making a soap-film smoother for a more complex boundary.
-More than likely you will have your boundary as a `sf` object. To convert that `sf` object into the boundary list needed by {mgcv} and {soapcheckr}, we will have to do some conversions. First that boundary might not be in the correct coordinate reference system (CRS). To create a soap-film smoother we need to use a CRS that for one unit change in either dimension (i.e., x and y) are equal. For example using latitude and longitude in decimal degrees with a WGS84 project will not work because one unit of change in either direction is not equal. Therefore, we will need to use a CRS that is based on an equal units. The most common CRS to do this is UTMs, if the boundary is already in UTMs great, if not see below 
+More than likely you will have your boundary as a `sf` object. To convert that `sf` object into the boundary list needed by {mgcv} and {soapcheckr}, we will have to do some conversions. First that boundary might not be in the correct coordinate reference system (CRS). To create a soap-film smoother we need to use a CRS that for one unit change in either dimension (i.e., x and y) are equal. For example using latitude and longitude in decimal degrees with a WGS 84 projection will not work because one unit of change in either direction is not equal. Therefore, we will need to use a CRS that is based on equal units. The most common CRS to do this is UTMs, if the boundary is already in UTMs great, if not see below.
 
 #### Step 1: Convert CRS 
-The more complex boundary that we will load through {soapcheckr} is a lake from northern Wisconsin, Sissabagama Lake. I grew up fishing on this lake which is where I initially fueled my passion and interest in aquatic ecosystems, fish, and fisheries management. This lake falls within UTM zone 15N that can also be refereed to as ESPG: 32615, but your boundary will more than likely fall into a different CRS. You can look up ESPG codes [here](https://epsg.io/).  
+The more complex boundary that we will load through {soapcheckr} is a lake from northern Wisconsin, Sissabagama Lake. I grew up fishing on this lake which is where initially became interested and passionate about aquatic ecosystems, fish, and fisheries management. This lake falls within UTM zone 15N that can also be refereed to as ESPG: 32615, but your boundary will more than likely fall into a different CRS. You can look up ESPG codes [here](https://epsg.io/). 
 
 ```{r sissabagama lake crs, message = FALSE}
 sissabagama_lake_sf <- sissabagama_lake_sf %>% 
   st_transform(crs = 32615)
 ```
 
-#### Step 2: Convert to boundary list  
-We need to create the list of lists of the boundaries from the `sf` object that we will supply othe soap-film smoother.  
+#### Step 2: Convert to boundary list 
+We need to create the list of lists of the boundaries from the `sf` object that we will supply to the soap-film smoother. 
 
 Our example lake has a `geometry` column that is a `POLYGON`. We need to be able to split that into each polygon (i.e., islands) that we will create the boundary list from. We can do this by first casting our `geometry` into `MULTIPOINT` and assigning each `MULTIPOINT` row an ID value. 
 ```{r sissabagama lake pnt sf, message = FALSE}
@@ -204,9 +204,9 @@ bnd_pt <- bnd_pt_sf %>%
   )
 ```
 
-We now have a list of dataframes split by  each polygon's x and y coordinates that have had the `id` column removed. We then need to create a vector that is `id` number of each polygon. In this case its 1-5, we can use `length()` to easily create the end of our numerical vector. 
+We now have a list of dataframes split by each polygon's x and y coordinates that have had the `id` column removed. We then need to create a vector that is `id` number of each polygon. In this case it's 1-5, we can use `length()` of our list o dataframes to easily create the end of our numerical vector. 
 
-We will then iterate over our list and bind them all into together to get our lists and lists of our polygon boundaries. 
+We will then iterate over our list and bind them all together to get our lists and lists of our polygon boundaries. 
 
 ```{r create list of lists boundary, message = FALSE}
 nr <- 1:length(bnd_pt)
@@ -225,7 +225,7 @@ soap_check(sissabagama_bnd_ls)
 
 #### Step 4: Make knots for a more complex boundary using [{sf}](https://r-spatial.github.io/sf/)
 
-We can use `st_make_grid()` to create a grid of equally spaced points across the boundary box of our example `sf` object of Sissabagama Lake. 
+We can use `st_make_grid()` to create a grid of equally spaced points across the boundary box of our example `sf` object of Sissabagama Lake. Remember a soap-film smoother needs equally spaced knots to smooth over. Our `sf` object is in UTMs which is great becasue then each grid point in this case is 200 m away from each other. Depending on the size of the boundary and system you can change 200 to whatever value makes sense (e.g., large system, further spaced knots, small system, closer spaced knots/this is suggestion but do whatever makes sense).  
 
 ```{r make knot grid, message = FALSE}
 lake_grid <- sissabagama_lake_sf %>%
@@ -235,13 +235,13 @@ lake_grid <- sissabagama_lake_sf %>%
 st_geometry(lake_grid) <- "geometry"
 ```
 
-We then will remove all the knots that fall outside the boundary by using `st_intersection()`. 
+We will then remove all the knots that fall outside the boundary by using `st_intersection()`. 
 
 ```{r remove all knots that are outside boundary, message = FALSE, warning = FALSE}
 lake_intesects <- st_intersection(sissabagama_lake_sf, lake_grid)
 ```
 
-Next we will create our knot dataframe by extracting the lon and lat of each point and then dropping the `geometry` and selecting our `lon` and `lat` columns. 
+Next we will create our knot dataframe by extracting the lon and lat of each point and then dropping the `geometry` column and selecting our `lon` and `lat` columns. 
 
 ```{r make knot dataframe, message = FALSE}
 lake_knots <- lake_intesects %>%
@@ -263,8 +263,7 @@ soap_check(sissabagama_bnd_ls, knots = lake_knots,
 
 We can see that there are a few knots that are too close to the boundary. We can remove them using `autocruncher()`
 ```{r}
-nrow(lake_knots)
-crunch_ind <- autocruncher(sissabagama_bnd_ls, lake_knots, k = 37, 
+crunch_ind <- autocruncher(sissabagama_bnd_ls, lake_knots, 
                            xname = "lon", yname = "lat")
 crunch_ind
 
@@ -289,21 +288,21 @@ sissabagama_bath_pt <- sissabagama_bath %>%
 
 soap_check(sissabagama_bnd_ls, data = sissabagama_bath_pt)
 ```
-Then we will assess the data to evaluate distribution model should fit the data to. We will use functions from [{fitdistrplus}](https://cran.r-project.org/web/packages/fitdistrplus/index.html). 
+Then we will assess the distribution of the data to determine which distribution the model should use to fit the data to. We will use functions from [{fitdistrplus}](https://cran.r-project.org/web/packages/fitdistrplus/index.html). 
 ```{r check skewness and kurtosis}
 depths <- sissabagama_bath$depth
 descdist(depths)
 ```
-Skewness and kurtosis of our example data indicates that a model using a Gamma distribution will likely fit. 
+Skewness and kurtosis of our example data indicates that a model using a Gamma error distribution will likely fit. 
 ```{r check distr}
 fit_gamma <- fitdist(depths, distr = "gamma", method = "mme")
 plot(fit_gamma)
 ```
 
-We can see the depth data will likely fit a gamma distribution and therefore our GAM will use a Gamma error distribution.
+We can see the depth data will likely fit a Gamma error distribution and therefore our GAM will use a Gamma error distribution.
 
 ### Step 6: Run the model 
-Prior to running our GAM with a soap film smoother we need to add one last thing to our boundary list. We need to add the variable `f` to every boundary polygon within our boundary list. This variable indicates to the soap-film smoother that our response variable is `0` right at the boundary, otherwise the soapfilm smoother does not know what to do when it hits the boundary.  
+Prior to running our GAM with a soap-film smoother we need to add one last thing to our boundary list. We need to add the variable `f` to every boundary polygon within our boundary list. This variable indicates to the soap-film smoother that our response variable is `0` right at the boundary, otherwise the soap-film smoother does not know what to do when it hits the boundary. 
 ```{r add f to our boundary list}
 names(lake_knots) <- c("x", "y")
 
@@ -316,7 +315,6 @@ sissabagama_bnd_ls <- lapply(nr,
                                )
 )
 ```
-
 We can now successfully run our GAM with a soap-film smoother.
 
 ```{r model our depth, warning = FALSE}
@@ -352,7 +350,7 @@ lake_pred <- sissabagama_lake_sf %>%
   st_as_sf() 
 st_geometry(lake_pred) <- "geometry"
 ```
-After creating the grid that we will predict on we will need to remove any points that fall outside our polygon bundary. 
+After creating the grid that we will predict values from we will need to remove any points that fall outside our polygon boundary. 
 ```{r remove all points that fall outside the boundary, warning = FALSE}
 lake_pred <- st_intersection(lake_pred, sissabagama_lake_sf) %>% 
   dplyr::select(geometry)
@@ -374,10 +372,9 @@ We then can use the function `augment()` from the package [{broom.mixed}](https:
 pred <- augment(m1, newdata = lake_pred_df)
 pred <- pred %>% 
   mutate(
-    lower = (.fitted - 1.96 * .se.fit),
-    higher = (.fitted + 1.96 * .se.fit)
+    lower = .fitted - 1.96 * .se.fit,
+    higher = .fitted + 1.96 * .se.fit
   )
-glimpse(pred)
 ```
 
 Lastly, we can visualize our predicted depths to create a bathymetic map of the lake using `ggplot()`. 
@@ -403,6 +400,6 @@ ggplot() +
     frame.colour = 'black')) + 
   labs(x = "Longitude", 
        y = "Latitude")
-
 ```
-Congratulations we have made a soap film GAM that takes in account the boundaries within the lake to estimate the bathymetry of the lake. For this example I used bathymetry, but you can use this workflow to model any type of variable (e.g., fish and/or animal movement, wind speed, water quality, ect.)
+
+Congratulations! We have made a soap-film GAM that takes in account the boundaries within the lake to estimate the bathymetry of the lake. For this example I used bathymetry, but you can use this workflow to model any type of variable (e.g., fish and/or animal movement/acceleration, wind speed, water quality, ect.)

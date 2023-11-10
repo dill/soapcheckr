@@ -1,11 +1,11 @@
-## ---- include = FALSE-----------------------------------------------------------------------------------------------------------------
+## ---- include = FALSE----------------------------------------------------------------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   fig.dim = c(7, 5), 
   comment = "#>"
 )
 
-## ----setup, message = FALSE, warning = FALSE------------------------------------------------------------------------------------------
+## ----setup, message = FALSE, warning = FALSE-----------------------------------------------------------------------------------------
 {
   library(broom.mixed)
   library(fitdistrplus)
@@ -18,13 +18,13 @@ knitr::opts_chunk$set(
   library(sf)
 }
 
-## ----ramsays horseshoe----------------------------------------------------------------------------------------------------------------
+## ----ramsays horseshoe---------------------------------------------------------------------------------------------------------------
 fsb <- list(fs.boundary())
 
-## ----check ramsays horseshoe----------------------------------------------------------------------------------------------------------
+## ----check ramsays horseshoe---------------------------------------------------------------------------------------------------------
 soap_check(fsb)
 
-## ----build fsb knots, message = FALSE-------------------------------------------------------------------------------------------------
+## ----build fsb knots, message = FALSE------------------------------------------------------------------------------------------------
 # create knots 
 knots <- expand.grid(x = seq(min(fsb[[1]]$x), 
                              max(fsb[[1]]$x), len = 15),
@@ -38,7 +38,7 @@ ind <- inSide(fsb, x = x, y = y)
 # remove knots outside the boundary 
 knots <- knots[ind, ]
 
-## ----build fake data, message = FALSE-------------------------------------------------------------------------------------------------
+## ----build fake data, message = FALSE------------------------------------------------------------------------------------------------
 set.seed(0)
 n <- 600
 
@@ -60,44 +60,44 @@ dat <- data.frame(z = z[ind],
                   x = x[ind],
                   y = y[ind])
 
-## ----check our knots------------------------------------------------------------------------------------------------------------------
+## ----check our knots-----------------------------------------------------------------------------------------------------------------
 soap_check(fsb, knots = knots)
 
-## ----remove knots that are offending--------------------------------------------------------------------------------------------------
+## ----remove knots that are offending-------------------------------------------------------------------------------------------------
 crunch_index <- autocruncher(fsb, knots, k = 30)
 crunch_index
 
 # remove knots that are problematic
 knots <- knots[-crunch_index, ] 
 
-## -------------------------------------------------------------------------------------------------------------------------------------
+## ------------------------------------------------------------------------------------------------------------------------------------
 soap_check(fsb, knots = knots)
 
-## -------------------------------------------------------------------------------------------------------------------------------------
+## ------------------------------------------------------------------------------------------------------------------------------------
 dat_2 <- dat[, 2:3]
 soap_check(fsb, data = dat_2)
 
-## ----run GAM--------------------------------------------------------------------------------------------------------------------------
+## ----run GAM-------------------------------------------------------------------------------------------------------------------------
 m <- gam(z ~ s(x, y, k = 30 , bs = "so",
                xt = list(bnd = fsb)),
          knots = knots, 
          data = dat)
 
 
-## ----check main effects of model, eval = FALSE----------------------------------------------------------------------------------------
+## ----check main effects of model, eval = FALSE---------------------------------------------------------------------------------------
 #  anova(m)
 
-## ----draw model effects---------------------------------------------------------------------------------------------------------------
+## ----draw model effects--------------------------------------------------------------------------------------------------------------
 draw(m)
 
-## ----check model fit------------------------------------------------------------------------------------------------------------------
+## ----check model fit-----------------------------------------------------------------------------------------------------------------
 appraise(m)
 
-## ----sissabagama lake crs, message = FALSE--------------------------------------------------------------------------------------------
+## ----sissabagama lake crs, message = FALSE-------------------------------------------------------------------------------------------
 sissabagama_lake_sf <- sissabagama_lake_sf %>% 
   st_transform(crs = 32615)
 
-## ----sissabagama lake pnt sf, message = FALSE-----------------------------------------------------------------------------------------
+## ----sissabagama lake pnt sf, message = FALSE----------------------------------------------------------------------------------------
 bnd_pt_sf <- sissabagama_lake_sf %>%
   dplyr::select(geometry) %>%
   st_cast("MULTIPOINT") %>%
@@ -105,7 +105,7 @@ bnd_pt_sf <- sissabagama_lake_sf %>%
     id = 1:nrow(.)
   )
 
-## ----sissabagama lake pnt, message = FALSE, warning = FALSE---------------------------------------------------------------------------
+## ----sissabagama lake pnt, message = FALSE, warning = FALSE--------------------------------------------------------------------------
 bnd_pt <- bnd_pt_sf %>%
   split(.$id) %>%
   purrr::map(~ st_cast(.x, "POINT") %>%
@@ -117,25 +117,25 @@ bnd_pt <- bnd_pt_sf %>%
                dplyr::select(-id)
   )
 
-## ----create list of lists boundary, message = FALSE-----------------------------------------------------------------------------------
+## ----create list of lists boundary, message = FALSE----------------------------------------------------------------------------------
 nr <- 1:length(bnd_pt)
 
 sissabagama_bnd_ls <- lapply(nr, function(n) as.list.data.frame(bnd_pt[[n]]))
 
-## ----check more complex boundary------------------------------------------------------------------------------------------------------
+## ----check more complex boundary-----------------------------------------------------------------------------------------------------
 soap_check(sissabagama_bnd_ls)
 
-## ----make knot grid, message = FALSE--------------------------------------------------------------------------------------------------
+## ----make knot grid, message = FALSE-------------------------------------------------------------------------------------------------
 lake_grid <- sissabagama_lake_sf %>%
   st_make_grid(cellsize = 200, square = TRUE, what = "centers") %>%
   st_as_sf() 
 
 st_geometry(lake_grid) <- "geometry"
 
-## ----remove all knots that are outside boundary, message = FALSE, warning = FALSE-----------------------------------------------------
+## ----remove all knots that are outside boundary, message = FALSE, warning = FALSE----------------------------------------------------
 lake_intesects <- st_intersection(sissabagama_lake_sf, lake_grid)
 
-## ----make knot dataframe, message = FALSE---------------------------------------------------------------------------------------------
+## ----make knot dataframe, message = FALSE--------------------------------------------------------------------------------------------
 lake_knots <- lake_intesects %>%
   mutate(
     lon = st_coordinates(.)[,"X"],
@@ -145,39 +145,38 @@ lake_knots <- lake_intesects %>%
   as.data.frame() %>%
   dplyr::select(lon, lat)
 
-## ----check knots using soap_check-----------------------------------------------------------------------------------------------------
+## ----check knots using soap_check----------------------------------------------------------------------------------------------------
 soap_check(sissabagama_bnd_ls, knots = lake_knots, 
            x_name = "lon", y_name = "lat")
 
-## -------------------------------------------------------------------------------------------------------------------------------------
-nrow(lake_knots)
-crunch_ind <- autocruncher(sissabagama_bnd_ls, lake_knots, k = 37, 
+## ------------------------------------------------------------------------------------------------------------------------------------
+crunch_ind <- autocruncher(sissabagama_bnd_ls, lake_knots, 
                            xname = "lon", yname = "lat")
 crunch_ind
 
 # remove knots that are problematic
 lake_knots <- lake_knots[-crunch_ind, ] 
 
-## ----recheck knots--------------------------------------------------------------------------------------------------------------------
+## ----recheck knots-------------------------------------------------------------------------------------------------------------------
 soap_check(sissabagama_bnd_ls, knots = lake_knots, 
            x_name = "lon", y_name = "lat")
 
 
-## ----remove depth for soap_check------------------------------------------------------------------------------------------------------
+## ----remove depth for soap_check-----------------------------------------------------------------------------------------------------
 sissabagama_bath_pt <- sissabagama_bath %>% 
   dplyr::select(-depth)
 
 soap_check(sissabagama_bnd_ls, data = sissabagama_bath_pt)
 
-## ----check skewness and kurtosis------------------------------------------------------------------------------------------------------
+## ----check skewness and kurtosis-----------------------------------------------------------------------------------------------------
 depths <- sissabagama_bath$depth
 descdist(depths)
 
-## ----check distr----------------------------------------------------------------------------------------------------------------------
+## ----check distr---------------------------------------------------------------------------------------------------------------------
 fit_gamma <- fitdist(depths, distr = "gamma", method = "mme")
 plot(fit_gamma)
 
-## ----add f to our boundary list-------------------------------------------------------------------------------------------------------
+## ----add f to our boundary list------------------------------------------------------------------------------------------------------
 names(lake_knots) <- c("x", "y")
 
 sissabagama_bnd_ls <- lapply(nr,
@@ -189,7 +188,7 @@ sissabagama_bnd_ls <- lapply(nr,
                                )
 )
 
-## ----model our depth, warning = FALSE-------------------------------------------------------------------------------------------------
+## ----model our depth, warning = FALSE------------------------------------------------------------------------------------------------
 m1 <- gam(depth ~ s(x, y,
                     bs = "so",
                     xt = list(bnd = sissabagama_bnd_ls)),
@@ -197,27 +196,27 @@ m1 <- gam(depth ~ s(x, y,
           knots = lake_knots,
           data = sissabagama_bath)
 
-## ----check main effects---------------------------------------------------------------------------------------------------------------
+## ----check main effects--------------------------------------------------------------------------------------------------------------
 anova(m1)
 summary(m1)
 
-## ----check partial effects------------------------------------------------------------------------------------------------------------
+## ----check partial effects-----------------------------------------------------------------------------------------------------------
 draw(m1)
 
-## ----check model fit for m1-----------------------------------------------------------------------------------------------------------
+## ----check model fit for m1----------------------------------------------------------------------------------------------------------
 appraise(m1)
 
-## ----create 10m grid to efficiently predict over the boundary-------------------------------------------------------------------------
+## ----create 10m grid to efficiently predict over the boundary------------------------------------------------------------------------
 lake_pred <- sissabagama_lake_sf %>%
   st_make_grid(cellsize = 10, square = TRUE, what = "centers") %>% 
   st_as_sf() 
 st_geometry(lake_pred) <- "geometry"
 
-## ----remove all points that fall outside the boundary, warning = FALSE----------------------------------------------------------------
+## ----remove all points that fall outside the boundary, warning = FALSE---------------------------------------------------------------
 lake_pred <- st_intersection(lake_pred, sissabagama_lake_sf) %>% 
   dplyr::select(geometry)
 
-## ----convert to a dataframe-----------------------------------------------------------------------------------------------------------
+## ----convert to a dataframe----------------------------------------------------------------------------------------------------------
 lake_pred_df <- lake_pred %>% 
   mutate(
     x = st_coordinates(.)[,"X"], 
@@ -226,16 +225,15 @@ lake_pred_df <- lake_pred %>%
   st_drop_geometry()
 
 
-## ----predict using augment from broom.mixed, message = FALSE--------------------------------------------------------------------------
+## ----predict using augment from broom.mixed, message = FALSE-------------------------------------------------------------------------
 pred <- augment(m1, newdata = lake_pred_df)
 pred <- pred %>% 
   mutate(
-    lower = (.fitted - 1.96 * .se.fit),
-    higher = (.fitted + 1.96 * .se.fit)
+    lower = .fitted - 1.96 * .se.fit,
+    higher = .fitted + 1.96 * .se.fit
   )
-glimpse(pred)
 
-## ----plot our predicted depths using ggplot-------------------------------------------------------------------------------------------
+## ----plot our predicted depths using ggplot------------------------------------------------------------------------------------------
 ggplot() +
   geom_raster(data = pred, aes(x = x, y = y, fill = .fitted)) +
   geom_sf(data = sissabagama_lake_sf, fill = NA, colour = "black") +
@@ -256,5 +254,4 @@ ggplot() +
     frame.colour = 'black')) + 
   labs(x = "Longitude", 
        y = "Latitude")
-
 
