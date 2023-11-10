@@ -263,7 +263,6 @@ soap_check(sissabagama_bnd_ls, knots = lake_knots,
 
 We can see that there are a few knots that are too close to the boundary. We can remove them using `autocruncher()`
 ```{r}
-nrow(lake_knots)
 crunch_ind <- autocruncher(sissabagama_bnd_ls, lake_knots, k = 37, 
                            xname = "lon", yname = "lat")
 crunch_ind
@@ -374,10 +373,9 @@ We then can use the function `augment()` from the package [{broom.mixed}](https:
 pred <- augment(m1, newdata = lake_pred_df)
 pred <- pred %>% 
   mutate(
-    lower = (.fitted - 1.96 * .se.fit),
-    higher = (.fitted + 1.96 * .se.fit)
+    lower = .fitted - 1.96 * .se.fit,
+    higher = .fitted + 1.96 * .se.fit
   )
-glimpse(pred)
 ```
 
 Lastly, we can visualize our predicted depths to create a bathymetic map of the lake using `ggplot()`. 
@@ -403,6 +401,5 @@ ggplot() +
     frame.colour = 'black')) + 
   labs(x = "Longitude", 
        y = "Latitude")
-
 ```
 Congratulations we have made a soap film GAM that takes in account the boundaries within the lake to estimate the bathymetry of the lake. For this example I used bathymetry, but you can use this workflow to model any type of variable (e.g., fish and/or animal movement, wind speed, water quality, ect.)
