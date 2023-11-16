@@ -102,7 +102,36 @@ autocruncher <- function(bnd,
     if (length(k)==1) k <- rep(k,n.loops)
     else stop("lengths of k and bnd are not compatible.")
   }
-  bnd <- mgcv:::process.boundary(bnd) ## add distances and close any open loops
+
+  # extracted mgcv:::process.boundary() using getAnywhere()
+  copy.process.boundary <- function(bnd){
+    for (i in 1:length(bnd)) {
+      x <- bnd[[i]]$x
+      y <- bnd[[i]]$y
+      n <- length(x)
+      if (length(y) != n)
+        stop("x and y not same length")
+      if (x[1] != x[n] || y[1] != y[n]) {
+        n <- n + 1
+        x[n] <- x[1]
+        y[n] <- y[1]
+        if (inherits(bnd[[i]], "data.frame"))
+          bnd[[i]][n, ] <- bnd[[i]][1, ]
+        else {
+          bnd[[i]]$x[n] <- x[1]
+          bnd[[i]]$y[n] <- y[1]
+          if (!is.null(bnd[[i]]$f))
+            bnd[[i]]$f[n] <- bnd[[i]]$f[1]
+        }
+      }
+      len <- c(0, sqrt((x[1:(n - 1)] - x[2:n])^2 + (y[1:(n -
+                                                           1)] - y[2:n])^2))
+      bnd[[i]]$d <- cumsum(len)
+    }
+    bnd
+  }
+
+  bnd <- copy.process.boundary(bnd) ## add distances and close any open loops
 
   ## create grid on which to solve Laplace equation
   ## Obtain grid limits from boundary 'bnd'....
@@ -125,11 +154,40 @@ autocruncher <- function(bnd,
   ## so grid is now nx by ny, cell size is dx by dy (but dx=dy)
   ## x0, y0 is "lower left" cell centre
 
-  ## Create grid index G
-  bnc <- mgcv:::bnd2C(bnd) ## convert boundary to form required in C code
+  ## Create grid index G using function mgcv:::bnd2C. I was able to get
+  ## the function using getAnywhere(bnd2C.)
+
+  copy.bnd2C <- function(bnd){
+    n.loop <- 1
+    if (is.null(bnd$x)) {
+      bn <- list(x = bnd[[1]]$x, y = bnd[[1]]$y)
+      n.loop <- length(bnd)
+      if (length(bnd) > 1)
+        for (i in 2:n.loop) {
+          bn$x <- c(bn$x, NA, bnd[[i]]$x)
+          bn$y <- c(bn$y, NA, bnd[[i]]$y)
+        }
+      bnd <- bn
+    }
+    lowLim <- min(c(bnd$x, bnd$y), na.rm = TRUE) - 1
+    ind <- is.na(bnd$x) | is.na(bnd$y)
+    bnd$x[ind] <- bnd$y[ind] <- lowLim - 1
+    bnd$n <- length(bnd$x)
+    if (bnd$n != length(bnd$y))
+      stop("x and y must be same length")
+    bnd$breakCode <- lowLim
+    bnd$n.loop <- n.loop
+    bnd
+  }
+  bnc <- copy.bnd2C(bnd) ## convert boundary to form required in C code
 
   G <- matrix(0, ny, nx)
   nb <- rep(0,bnc$n.loop)
+
+  # extract function mgcv:::C_boundary using getAnywhere() and build it within
+  # autocurncher
+  # C_boundary <-
+
 # bring in C_boundary using mgcv:::C_boundary
   oo <- .C(mgcv:::C_boundary,
            G = as.integer(G),
@@ -140,11 +198,12 @@ autocruncher <- function(bnd,
            dx = as.double(dx),
            dy = as.double(dy),
            nx = as.integer(nx),
-           as.integer(ny),
+           ny = as.integer(ny),
            x = as.double(bnc$x),
            y = as.double(bnc$y),
            breakCode = as.double(bnc$breakCode),
-           n = as.integer(bnc$n), nb = as.integer(nb))
+           n = as.integer(bnc$n),
+           nb = as.integer(nb))
 
   ret <- list(G=matrix(oo$G,ny,nx),nb=oo$nb,d=oo$d[oo$d >= 0],
               x0=x0,y0=y0,dx=dx,dy=dy,bnd=bnd)

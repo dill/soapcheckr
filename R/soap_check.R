@@ -217,7 +217,12 @@ soap_check <- function(bnd,
           dplyr::summarise(do_union = FALSE) |>
           st_cast("POLYGON")
 
-
+        if(!all(names(data) %in% c("x", "y"))) {
+          data$x <- data[[x_name]]
+          data[[x_name]] <- NULL
+          data$y <- data[[y_name]]
+          data[[y_name]] <- NULL
+        }
         knt_sf <- data |>
           st_as_sf(coords = c("x", "y"))
 
@@ -229,8 +234,8 @@ soap_check <- function(bnd,
       inout <- pip(bnd = bnd[1], data)
     }
     if(!all(inout)){
-      warning(paste(type, paste(which(!inout), collapse=", "),
-                    "are outside the boundary."))
+      warning(paste(type, paste(which(!inout), collapse = ", "),
+                    " are outside the boundary."))
     }
   }
 
@@ -252,7 +257,7 @@ soap_check <- function(bnd,
 
     if(!is.null(crunch_ind)){
       warning(paste0("Knots ", paste(crunch_ind, collapse = ", "),
-                     "are outside the boundary."))
+                     " are outside the boundary."))
     }
     #DMILL colour "#1b9e77"
     if(plot){
