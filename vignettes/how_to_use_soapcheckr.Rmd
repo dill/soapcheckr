@@ -23,12 +23,6 @@ The purpose of this vignette is to demonstrate an effective workflow while using
 
 If we were wanting to make a soap-film smoother for a boundary that does not have any inner boundaries (e.g., a lake without an island) we can use `{soapcheckr}` to assess our single boundary and the potential knots we want to smooth over. 
 
-#### Install [{soapcheckr}](https://github.com/dill/soap_checker)
-```{r install soapcheckr, eval = FALSE}
-install.packages('soapcheckr', repos = c('https://benjaminhlina.r-universe.dev',
-                                         'https://cloud.r-project.org'))
-```
-
 #### Step 1: Load packages 
 
 We will use some data manipulation functions from [{dplyr}](https://dplyr.tidyverse.org/) and some spatial functions from [{sf}](https://r-spatial.github.io/sf/) to first check if we can make a soap-film using [{soapcheckr}](https://github.com/dill/soap_checker) and second to run a GAM using [{mgcv}](https://cran.r-project.org/web/packages/mgcv/index.html) with a soap-film smoother.
