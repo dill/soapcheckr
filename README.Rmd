@@ -26,7 +26,7 @@ To do the spatial analysis, we require a couple of extra libraries: [{sf}](https
 
 ```{r, eval = FALSE}
 install.packages("devtools")
-devtools::install_github("dill/soap_checker")
+devtools::install_github("dill/soapcheckr")
 ```
 
 Next load `{soapcheckr}` and walk through the vignette to see how to use the functions. We highly encourage walking through both examples in the vignette. 

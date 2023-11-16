@@ -20,7 +20,7 @@ will be loaded when installing
 
 ``` r
 install.packages("devtools")
-devtools::install_github("dill/soap_checker")
+devtools::install_github("dill/soapcheckr")
 ```
 
 Next load `{soapcheckr}` and walk through the vignette to see how to use

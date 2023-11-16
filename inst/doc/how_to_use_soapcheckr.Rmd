@@ -25,7 +25,7 @@ If we were wanting to make a soap-film smoother for a boundary that does not hav
 
 #### Step 1: Load packages 
 
-We will use some data manipulation functions from [{dplyr}](https://dplyr.tidyverse.org/) and some spatial functions from [{sf}](https://r-spatial.github.io/sf/) to first check if we can make a soap-film using [{soapcheckr}](https://github.com/dill/soap_checker)) and second to run a GAM using [{mgcv}](https://cran.r-project.org/web/packages/mgcv/index.html) with a soap-film smoother.
+We will use some data manipulation functions from [{dplyr}](https://dplyr.tidyverse.org/) and some spatial functions from [{sf}](https://r-spatial.github.io/sf/) to first check if we can make a soap-film using [{soapcheckr}](https://github.com/dill/soap_checker) and second to run a GAM using [{mgcv}](https://cran.r-project.org/web/packages/mgcv/index.html) with a soap-film smoother.
 
 ```{r setup, message = FALSE, warning = FALSE}
 {
@@ -109,11 +109,14 @@ dat <- data.frame(z = z[ind],
 ```
 
 However, there still may be knots and/or data points that are too close to the boundary.
-One can go through, one-by-one and remove the offending knots as `crunch.knots()` finds them, but that’s a bit tedious. Enter `soap_check()` and `autocruncher()`, with the former allowing one to visually check what knots and/or data will causes issues and the latter identifying the index location of the offending knots or data points. If the knot dataframe has column names other than `x` and `y`, we need to supply `soapcheckr()` those names using the arguments `x_name` and `y_name`, respectfully. 
+One can go through, one-by-one and remove the offending knots as `crunch.knots()` finds them, but that’s a bit tedious. Enter `soap_check()` and `autocruncher()`, with the former allowing one to visually check what knots and/or data will causes issues and the latter identifying the index location of the offending knots or data points. If the knot dataframe has column names other than `x` and `y`, we need to supply `soapcheckr()` those names using the arguments `x_name` and `y_name`, respectfully.
+
 ```{r check our knots}
 soap_check(fsb, knots = knots)
 ```
+
 We can see that there four offending knots that we can subsequently remove using `autocruncher()`. This function will return the indices of the knots that would cause issues. If the knot dataframe has column names other than `x` and `y`, we need supply those column names to the arguments `xname` and `yname`, respectfully. Note that you need to set the `k` and `nmax` arguments in `autocruncher()` to be the same as your planned value in `gam()`.
+
 ```{r remove knots that are offending}
 crunch_index <- autocruncher(fsb, knots, k = 30)
 crunch_index
@@ -129,7 +132,7 @@ soap_check(fsb, knots = knots)
 
 And they do! Congratulations! 
 
-### Step 4: Check the data 
+#### Step 4: Check the data 
 
 We can also use `soap_check()` to check if our data falls within the boundary, but `soap_check()` only cares about the coordinates you want to supply the soap-film. So first we will create a secondary dataframe that has the response variable, `z`, removed from it. 
 
@@ -140,7 +143,7 @@ soap_check(fsb, data = dat_2)
 
 Congrats we can see our data doesn't fall too closely to boundary and is within the boundary. 
 
-### Step 5: Run the model 
+#### Step 5: Run the model 
 
 Between data, knots, and boundary all column names must be the same for the model to work. Prior to running confirm that they are all the same. 
 
@@ -204,7 +207,7 @@ bnd_pt <- bnd_pt_sf %>%
   )
 ```
 
-We now have a list of dataframes split by each polygon's x and y coordinates that have had the `id` column removed. We then need to create a vector that is `id` number of each polygon. In this case it's 1-5, we can use `length()` of our list o dataframes to easily create the end of our numerical vector. 
+We now have a list of dataframes split by each polygon's x and y coordinates that have had the `id` column removed. We then need to create a vector that is `id` number of each polygon. In this case it's 1-5, we can use `length()` of our list of dataframes to easily create the end of our numerical vector.  
 
 We will then iterate over our list and bind them all together to get our lists and lists of our polygon boundaries. 
 
@@ -214,7 +217,7 @@ nr <- 1:length(bnd_pt)
 sissabagama_bnd_ls <- lapply(nr, function(n) as.list.data.frame(bnd_pt[[n]]))
 ```
 
-### Step 3: Check if the boundary list works 
+#### Step 3: Check if the boundary list works 
 
 We will check the boundary list using `soap_check()`
 
@@ -254,14 +257,14 @@ lake_knots <- lake_intesects %>%
   dplyr::select(lon, lat)
 ```
 
-Now that we have our knots we can check to see if there are any knots that fall too close to the boundary using `soap_check()`
+Now that we have our knots we can check to see if there are any knots that fall too close to the boundary using `soap_check()`.
 ```{r check knots using soap_check}
 soap_check(sissabagama_bnd_ls, knots = lake_knots, 
            x_name = "lon", y_name = "lat")
 ```
 
 
-We can see that there are a few knots that are too close to the boundary. We can remove them using `autocruncher()`
+We can see that there are a few knots that are too close to the boundary. We can remove them using `autocruncher()`.
 ```{r}
 crunch_ind <- autocruncher(sissabagama_bnd_ls, lake_knots, 
                            xname = "lon", yname = "lat")
@@ -270,7 +273,7 @@ crunch_ind
 # remove knots that are problematic
 lake_knots <- lake_knots[-crunch_ind, ] 
 ```
-Now that those knots have been removed we can recheck our knots using `soap_check()`
+Now that those knots have been removed we can recheck our knots using `soap_check()`.
 ```{r recheck knots}
 soap_check(sissabagama_bnd_ls, knots = lake_knots, 
            x_name = "lon", y_name = "lat")
@@ -278,7 +281,7 @@ soap_check(sissabagama_bnd_ls, knots = lake_knots,
 ```
 Congratulations! We have knots and a boundary that we can supply our model. 
 
-### Step 5: Sissabagama example dataset 
+#### Step 5: Sissabagama example dataset 
 
 We will bring our sampled depths at given locations for Sissabagama lake. This data was generated by referencing the contour map supplied by the [Wisconsin DNR](https://apps.dnr.wi.gov/lakes/lakepages/LakeDetail.aspx?wbic=2393500). We will first remove depth to check if the data points all fall within our boundary using `soap_check()`.
 
@@ -301,7 +304,7 @@ plot(fit_gamma)
 
 We can see the depth data will likely fit a Gamma error distribution and therefore our GAM will use a Gamma error distribution.
 
-### Step 6: Run the model 
+#### Step 6: Run the model 
 Prior to running our GAM with a soap-film smoother we need to add one last thing to our boundary list. We need to add the variable `f` to every boundary polygon within our boundary list. This variable indicates to the soap-film smoother that our response variable is `0` right at the boundary, otherwise the soap-film smoother does not know what to do when it hits the boundary. 
 ```{r add f to our boundary list}
 names(lake_knots) <- c("x", "y")
@@ -326,9 +329,15 @@ m1 <- gam(depth ~ s(x, y,
           data = sissabagama_bath)
 ```
 
-We can evaluate the main and individual effects of the model using `anova()` and `summary()`
+
+We can evaluate the main of the model using `anova()`
 ```{r check main effects}
 anova(m1)
+```
+
+Next we can evaluate partial effects of the model using `summary()`
+
+```{r check indivdiual effects}
 summary(m1)
 ```
 
@@ -341,7 +350,7 @@ We can evaluate how well the model fit is to the data using `appraise()` also fr
 appraise(m1)
 ```
 
-### Step 7: Plot our predicted results 
+#### Step 7: Plot our predicted results 
 
 We will first create a 10 m grid from our `sf` object of our boundary. Depending on the size of the boundary you can change the grid size distance to whatever distance makes sense (i.e., if the system is large you may want to increase the `cellsize`). 
 ```{r create 10m grid to efficiently predict over the boundary}
@@ -350,7 +359,7 @@ lake_pred <- sissabagama_lake_sf %>%
   st_as_sf() 
 st_geometry(lake_pred) <- "geometry"
 ```
-After creating the grid that we will predict values from we will need to remove any points that fall outside our polygon boundary. 
+After creating the grid that we will predict values from we will need to remove any points that fall outside our polygon boundary.
 ```{r remove all points that fall outside the boundary, warning = FALSE}
 lake_pred <- st_intersection(lake_pred, sissabagama_lake_sf) %>% 
   dplyr::select(geometry)
